@@ -1,20 +1,33 @@
 var Test = require('tape/lib/test')
 var co = require('co')
 
+var _beforeEach = undefined
+
+var beforeEach = function( cb ) {
+  console.log('beforeEach')
+  _beforeEach = cb
+}
+
 Test.prototype.run = function () {
-  if (this._skip) {
-    return this.end()
-  }
-  this.emit('prerun')
-  var p = this._cb && co(this._cb(this))
-  var self = this
-  p.then(function () {
-    self.end()
-  }, function (err) {
-    err ? self.error(err) : self.fail(err)
-    self.end()
+    var self = this
+    co( function * () {
+        if (self._skip) {
+            return self.end()
+        }
+        self.emit('prerun')
+        if( _beforeEach ) {
+            yield co(_beforeEach(self))
+        }
+        if( self._cb ) {
+            yield co(self._cb(self))
+        }
+        self.end()
+        self.emit('run')
+  }).catch( function(err) {
+      err ? self.error(err) : self.fail(err)
+      self.end()
   })
-  this.emit('run')
 }
 
 module.exports = require('tape')
+module.exports.beforeEach = beforeEach
