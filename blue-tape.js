@@ -4,8 +4,7 @@ var co = require('co')
 var _beforeEach = undefined
 
 var beforeEach = function( cb ) {
-  console.log('beforeEach')
-  _beforeEach = cb
+    _beforeEach = cb
 }
 
 Test.prototype.run = function () {
