@@ -1,43 +1,35 @@
-# blue-tape
+# purple-tape
 
-Tape with promise support.
+Run tests with [tape](https://github.com/substack/tape) using [co](https://github.com/tj/co).
+
+This code was initially forked from
+[blue-tape](https://github.com/spion/blue-tape) but has now been largely
+rewritten.
 
 ### usage
 
-Same as tape, except if you return a promise from a test,
-it will be checked for errors. If there are no errors, the test
-will end. Otherwise the test will fail. This means there is no
-need to use `t.plan()` or `t.end()`
+Same as tape, except that instead of supplying a test-function, you should
+supply it with a generator function that can be executed with co. The test ends
+when the promise returned by co resolves.  This means there is no need to use
+`t.plan()` or `t.end()`
 
-Also provides `t.shouldFail(promise P, optional class C)` which returns
-a new promise that resolves successfully iff `P` rejects. If you provide 
-the optional class, then it additiionally ensures that `err` is an
-instance of that class.
+Also provides `t.beforeEach( function * (t) { ... })` which can be used to
+run some code before each test-case.
 
 ### example
 
-assuming `delay()` returns a promise
+    'use strict'
 
+    const test = require('purple-tape')
 
-```js
-test("simple delay", function(t) {
-    return delay(1);
-});
+    test.beforeEach( function * (t) {
+        t.ok(yield Promise.resolve(true), 'shall run beforeEach')
+    })
 
-test("should fail", function(t) {
-    return delay(1).then(function() {
-        throw new Error("Failed!");
-    });
-});
-```
+    test('run with co', function * (t) {
+        t.ok(yield Promise.resolve(true), 'shall yield results')
+    })
 
-assuming `failDelay()` returns a promise that rejects with a DerpError
-
-```js
-test("promise fails but test succeeds", function(t) {
-    return t.shouldFail(failDelay(), DerpError)
-});
-```
 
 ### license
 
