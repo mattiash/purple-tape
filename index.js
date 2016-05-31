@@ -22,10 +22,10 @@ Test.prototype.run = function () {
         }
         self.end()
         self.emit('run')
-  }).catch( function(err) {
-      err ? self.error(err) : self.fail(err)
-      self.end()
-  })
+    }).catch( function(err) {
+        err ? self.error(err) : self.fail(err)
+        self.end()
+    })
 }
 
 module.exports = require('tape')

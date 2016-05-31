@@ -1,0 +1,28 @@
+ecmaFeatures:
+  blockBindings: true
+  forOf: true
+  generators: true
+  templateStrings: true
+  objectLiteralShorthandProperties: true
+  classes: true
+  arrowFunctions: true
+rules:
+  indent:
+    - error
+    - 4
+  quotes:
+    - error
+    - single
+  linebreak-style:
+    - error
+    - unix
+  semi:
+    - error
+    - never
+  no-return-assign:
+    - error
+    - always
+env:
+  es6: true
+  node: true
+extends: 'eslint:recommended'
