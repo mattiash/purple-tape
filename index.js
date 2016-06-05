@@ -1,10 +1,21 @@
 var Test = require('tape/lib/test')
 var co = require('co')
 
+var _beforeAll = undefined
+var _beforeAllDone = false
 var _beforeEach = undefined
+var _afterEach = undefined
+
+var beforeAll = function( cb ) {
+    _beforeAll = cb
+}
 
 var beforeEach = function( cb ) {
     _beforeEach = cb
+}
+
+var afterEach = function( cb ) {
+    _afterEach = cb
 }
 
 Test.prototype.run = function () {
@@ -14,11 +25,18 @@ Test.prototype.run = function () {
             return self.end()
         }
         self.emit('prerun')
+        if( _beforeAll && !_beforeAllDone ) {
+            _beforeAllDone = true
+            yield co(_beforeAll(self))
+        }
         if( _beforeEach ) {
             yield co(_beforeEach(self))
         }
         if( self._cb ) {
             yield co(self._cb(self))
+        }
+        if( _afterEach ) {
+            yield co(_afterEach(self))
         }
         self.end()
         self.emit('run')
@@ -29,4 +47,6 @@ Test.prototype.run = function () {
 }
 
 module.exports = require('tape')
+module.exports.beforeAll = beforeAll
 module.exports.beforeEach = beforeEach
+module.exports.afterEach = afterEach
