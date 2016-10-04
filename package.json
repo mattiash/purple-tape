@@ -1,6 +1,6 @@
 {
   "name": "purple-tape",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Tape test runner using co",
   "main": "index.js",
   "keywords": [
@@ -8,7 +8,7 @@
     "promises"
   ],
   "scripts": {
-      "lint": "./node_modules/.bin/eslint index.js"
+    "lint": "./node_modules/.bin/eslint index.js"
   },
   "author": "Mattias Holmlund",
   "license": "MIT",
