@@ -20,6 +20,7 @@ var afterEach = function( cb ) {
 
 Test.prototype.run = function () {
     var self = this
+
     co( function * () {
         if (self._skip) {
             return self.end()
@@ -33,7 +34,12 @@ Test.prototype.run = function () {
             yield co(_beforeEach(self))
         }
         if( self._cb ) {
-            yield co(self._cb(self))
+            try {
+                yield co(self._cb(self))
+            }
+            catch (err) {
+                err ? self.error(err) : self.fail(err)
+            }
         }
         if( _afterEach ) {
             yield co(_afterEach(self))
@@ -41,7 +47,7 @@ Test.prototype.run = function () {
         self.end()
         self.emit('run')
     }).catch( function(err) {
-        err ? self.error(err) : self.fail(err)
+        err ? self.error(err) : self.fail(err)        
         self.end()
     })
 }
