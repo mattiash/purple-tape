@@ -2,6 +2,10 @@
 
 const test = require('./')
 
+test.onFinish( function() {
+    console.log('Running onFinish')
+})
+
 test.beforeAll( function * (t) {
     t.ok(yield Promise.resolve(true), 'shall run beforeAll')
 })
