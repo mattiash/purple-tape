@@ -24,7 +24,10 @@ Also provides
 - `t.beforeAll( function * (t) { ... })` which can be used to run some code
   before all test-cases.
 
-The reason for having the before/afterEach and beforeAll functions is to make
+- `t.afterAll( function * (t) { ... })` which can be used to run some code
+  after all test-cases.
+
+The reason for having the before/afterEach and before/afterAll functions is to make
 it possible to run a single test-case with test.only() and to make the intention
 of the test-code clearer.
 
@@ -47,6 +50,10 @@ benefit that it can run several test-files in parallel.
         t.ok(yield Promise.resolve(true), 'shall run beforeAll')
     })
 
+    test.afterAll( function * (t) {
+        t.ok(yield Promise.resolve(true), 'shall run afterAll')
+    })
+
     test.beforeEach( function * (t) {
         t.ok(yield Promise.resolve(true), 'shall run beforeEach')
     })
@@ -65,7 +72,6 @@ benefit that it can run several test-files in parallel.
 
 will provide the following output:
 
-    $ node sample.js
     TAP version 13
     # run test 1 with co
     ok 1 shall run beforeAll
@@ -76,10 +82,11 @@ will provide the following output:
     ok 5 shall run beforeEach
     ok 6 shall yield results
     ok 7 shall run afterEach
+    ok 8 shall run afterAll
 
-    1..7
-    # tests 7
-    # pass  7
+    1..8
+    # tests 8
+    # pass  8
 
     # ok
 

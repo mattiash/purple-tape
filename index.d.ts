@@ -22,7 +22,7 @@ declare namespace tape {
     export function beforeAll(cb: any): void;
     export function beforeEach(cb: any): void;
     export function afterEach(cb: any): void;
-    export function onFinish(cb: any): void;
+    export function afterAll(cb: any): void;
 
     interface TestCase {
         (test: Test): void;
