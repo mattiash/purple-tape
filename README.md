@@ -42,8 +42,6 @@ benefit that it can run several test-files in parallel.
 
 ### example
 
-    'use strict'
-
     const test = require('purple-tape')
 
     test.beforeAll( function * (t) {

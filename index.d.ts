@@ -1,6 +1,9 @@
-// Type definitions for tape v4.2.2
+// Type definitions for tape v4.2.30
 // Project: https://github.com/substack/tape
-// Definitions by: Bart van der Schoor <https://github.com/Bartvds>, Haoqun Jiang <https://github.com/sodatea>
+// Definitions by: Bart van der Schoor <https://github.com/Bartvds>
+//                 Haoqun Jiang <https://github.com/sodatea>
+//                 Dennis Schwartz <https://github.com/DennisSchwartz>
+//                 Michael Henretty <https://github.com/mikehenrty>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 
 /// <reference types="node" />
@@ -19,10 +22,10 @@ declare function tape(cb: tape.TestCase): void;
 declare function tape(opts: tape.TestOptions, cb: tape.TestCase): void;
 
 declare namespace tape {
-    export function beforeAll(cb: any): void;
-    export function beforeEach(cb: any): void;
-    export function afterEach(cb: any): void;
-    export function afterAll(cb: any): void;
+    export function beforeAll(cb: tape.TestCase): void;
+    export function beforeEach(cb: tape.TestCase): void;
+    export function afterEach(cb: tape.TestCase): void;
+    export function afterAll(cb: tape.TestCase): void;
 
     interface TestCase {
         (test: Test): void;
@@ -49,6 +52,11 @@ declare namespace tape {
     export function skip(name: string, cb: tape.TestCase): void;
 
     /**
+     * The onFinish hook will get invoked when ALL tape tests have finished right before tape is about to print the test summary.
+     */
+    export function onFinish(cb: () => void): void;
+
+    /**
      * Like test(name, cb) except if you use .only this is the only test case that will run for the entire process, all other test cases using tape will be ignored.
      */
     export function only(name: string, cb: tape.TestCase): void;
@@ -70,6 +78,7 @@ declare namespace tape {
          * Additional tests queued up after t will not be run until all subtests finish.
          */
         test(name: string, cb: tape.TestCase): void;
+        test(name: string, opts: TestOptions, cb: tape.TestCase): void;
 
         /**
          * Declare that n assertions should be run. end() will be called automatically after the nth assertion.
@@ -129,59 +138,59 @@ declare namespace tape {
         /**
          * Assert that a === b with an optional description msg.
          */
-        equal(a: any, b: any, msg?: string): void;
-        equals(a: any, b: any, msg?: string): void;
-        isEqual(a: any, b: any, msg?: string): void;
-        is(a: any, b: any, msg?: string): void;
-        strictEqual(a: any, b: any, msg?: string): void;
-        strictEquals(a: any, b: any, msg?: string): void;
+        equal(actual: any, expected: any, msg?: string): void;
+        equals(actual: any, expected: any, msg?: string): void;
+        isEqual(actual: any, expected: any, msg?: string): void;
+        is(actual: any, expected: any, msg?: string): void;
+        strictEqual(actual: any, expected: any, msg?: string): void;
+        strictEquals(actual: any, expected: any, msg?: string): void;
 
         /**
          * Assert that a !== b with an optional description msg.
          */
-        notEqual(a: any, b: any, msg?: string): void;
-        notEquals(a: any, b: any, msg?: string): void;
-        notStrictEqual(a: any, b: any, msg?: string): void;
-        notStrictEquals(a: any, b: any, msg?: string): void;
-        isNotEqual(a: any, b: any, msg?: string): void;
-        isNot(a: any, b: any, msg?: string): void;
-        not(a: any, b: any, msg?: string): void;
-        doesNotEqual(a: any, b: any, msg?: string): void;
-        isInequal(a: any, b: any, msg?: string): void;
+        notEqual(actual: any, expected: any, msg?: string): void;
+        notEquals(actual: any, expected: any, msg?: string): void;
+        notStrictEqual(actual: any, expected: any, msg?: string): void;
+        notStrictEquals(actual: any, expected: any, msg?: string): void;
+        isNotEqual(actual: any, expected: any, msg?: string): void;
+        isNot(actual: any, expected: any, msg?: string): void;
+        not(actual: any, expected: any, msg?: string): void;
+        doesNotEqual(actual: any, expected: any, msg?: string): void;
+        isInequal(actual: any, expected: any, msg?: string): void;
 
         /**
          * Assert that a and b have the same structure and nested values using node's deepEqual() algorithm with strict comparisons (===) on leaf nodes and an optional description msg.
          */
-        deepEqual(a: any, b: any, msg?: string): void;
-        deepEquals(a: any, b: any, msg?: string): void;
-        isEquivalent(a: any, b: any, msg?: string): void;
-        same(a: any, b: any, msg?: string): void;
+        deepEqual(actual: any, expected: any, msg?: string): void;
+        deepEquals(actual: any, expected: any, msg?: string): void;
+        isEquivalent(actual: any, expected: any, msg?: string): void;
+        same(actual: any, expected: any, msg?: string): void;
 
         /**
          * Assert that a and b do not have the same structure and nested values using node's deepEqual() algorithm with strict comparisons (===) on leaf nodes and an optional description msg.
          */
-        notDeepEqual(a: any, b: any, msg?: string): void;
-        notEquivalent(a: any, b: any, msg?: string): void;
-        notDeeply(a: any, b: any, msg?: string): void;
-        notSame(a: any, b: any, msg?: string): void;
-        isNotDeepEqual(a: any, b: any, msg?: string): void;
-        isNotDeeply(a: any, b: any, msg?: string): void;
-        isNotEquivalent(a: any, b: any, msg?: string): void;
-        isInequivalent(a: any, b: any, msg?: string): void;
+        notDeepEqual(actual: any, expected: any, msg?: string): void;
+        notEquivalent(actual: any, expected: any, msg?: string): void;
+        notDeeply(actual: any, expected: any, msg?: string): void;
+        notSame(actual: any, expected: any, msg?: string): void;
+        isNotDeepEqual(actual: any, expected: any, msg?: string): void;
+        isNotDeeply(actual: any, expected: any, msg?: string): void;
+        isNotEquivalent(actual: any, expected: any, msg?: string): void;
+        isInequivalent(actual: any, expected: any, msg?: string): void;
 
         /**
          * Assert that a and b have the same structure and nested values using node's deepEqual() algorithm with loose comparisons (==) on leaf nodes and an optional description msg.
          */
-        deepLooseEqual(a: any, b: any, msg?: string): void;
-        looseEqual(a: any, b: any, msg?: string): void;
-        looseEquals(a: any, b: any, msg?: string): void;
+        deepLooseEqual(actual: any, expected: any, msg?: string): void;
+        looseEqual(actual: any, expected: any, msg?: string): void;
+        looseEquals(actual: any, expected: any, msg?: string): void;
 
         /**
          * Assert that a and b do not have the same structure and nested values using node's deepEqual() algorithm with loose comparisons (==) on leaf nodes and an optional description msg.
          */
-        notDeepLooseEqual(a: any, b: any, msg?: string): void;
-        notLooseEqual(a: any, b: any, msg?: string): void;
-        notLooseEquals(a: any, b: any, msg?: string): void;
+        notDeepLooseEqual(actual: any, expected: any, msg?: string): void;
+        notLooseEqual(actual: any, expected: any, msg?: string): void;
+        notLooseEquals(actual: any, expected: any, msg?: string): void;
 
         /**
          * Assert that the function call fn() throws an exception.
