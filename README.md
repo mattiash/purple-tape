@@ -2,6 +2,8 @@
 
 Run tests with [tape](https://github.com/substack/tape) using [co](https://github.com/tj/co).
 
+[![npm version](https://badge.fury.io/js/purple-tape.svg)](https://badge.fury.io/js/purple-tape)
+
 This code was initially forked from
 [blue-tape](https://github.com/spion/blue-tape) but has now been largely
 rewritten.
