@@ -6,7 +6,7 @@ This code was initially forked from
 [blue-tape](https://github.com/spion/blue-tape) but has now been largely
 rewritten.
 
-### usage
+### Usage
 
 Same as tape, except that instead of supplying a test-function, you should
 supply it with a generator function that can be executed with co. The test ends
@@ -40,33 +40,35 @@ several test-files with the tape runner. Instead, I recommend using
 [multi-tape](https://www.npmjs.com/package/multi-tape). This has the additional
 benefit that it can run several test-files in parallel.
 
-### example
+### Example
 
-    const test = require('purple-tape')
+```javascript
+const test = require('purple-tape')
 
-    test.beforeAll( function * (t) {
-        t.ok(yield Promise.resolve(true), 'shall run beforeAll')
-    })
+test.beforeAll( function * (t) {
+    t.ok(yield Promise.resolve(true), 'shall run beforeAll')
+})
 
-    test.afterAll( function * (t) {
-        t.ok(yield Promise.resolve(true), 'shall run afterAll')
-    })
+test.afterAll( function * (t) {
+    t.ok(yield Promise.resolve(true), 'shall run afterAll')
+})
 
-    test.beforeEach( function * (t) {
-        t.ok(yield Promise.resolve(true), 'shall run beforeEach')
-    })
+test.beforeEach( function * (t) {
+    t.ok(yield Promise.resolve(true), 'shall run beforeEach')
+})
 
-    test.afterEach( function * (t) {
-        t.ok(yield Promise.resolve(true), 'shall run afterEach')
-    })
+test.afterEach( function * (t) {
+    t.ok(yield Promise.resolve(true), 'shall run afterEach')
+})
 
-    test('run test 1 with co', function * (t) {
-        t.ok(yield Promise.resolve(true), 'shall yield results')
-    })
+test('run test 1 with co', function * (t) {
+    t.ok(yield Promise.resolve(true), 'shall yield results')
+})
 
-    test('run test 2 with co', function * (t) {
-        t.ok(yield Promise.resolve(true), 'shall yield results')
-    })
+test('run test 2 with co', function * (t) {
+    t.ok(yield Promise.resolve(true), 'shall yield results')
+})
+```
 
 will provide the following output:
 
@@ -88,7 +90,38 @@ will provide the following output:
 
     # ok
 
+### Typescript example
 
-### license
+purple-tape comes with typings included:
+
+```typescript
+import * as test from 'purple-tape'
+
+test.beforeAll( async (t) => {
+    t.ok(await Promise.resolve(true), 'shall run beforeAll')
+})
+
+test.afterAll(async (t) => {
+    t.ok(await Promise.resolve(true), 'shall run afterAll')
+})
+
+test.beforeEach(async (t) => {
+    t.ok(await Promise.resolve(true), 'shall run beforeEach')
+})
+
+test.afterEach( async (t) => {
+    t.ok(await Promise.resolve(true), 'shall run afterEach')
+})
+
+test('run test 1', async (t) => {
+    t.ok(await Promise.resolve(true), 'shall await results')
+})
+
+test('run test 2', async (t) => {
+    t.ok(await Promise.resolve(true), 'shall await results')
+})
+```
+
+### License
 
 MIT
