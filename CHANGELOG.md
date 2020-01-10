@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+-   Fix output format
+-   test.skip()
+-   notOk, notEqual, notDeepEqual
+
 ## [3.0.1] 2020-01-10
 
 -   Change module import pattern

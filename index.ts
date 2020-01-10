@@ -42,6 +42,10 @@ test.only = (title: string, fn: TestFunction) => {
     }
 }
 
+test.skip = (title: string, _fn: TestFunction) => {
+    tests.push([`SKIP ${title}`, async () => {}])
+}
+
 export class Test {
     protected success = true
 
@@ -66,8 +70,21 @@ export class Test {
             this.fail(message, {
                 operator: 'ok',
                 actual: criteria,
-                expected: true,
+                expected: 'truthy',
                 stack: new Error('not ok').stack,
+            })
+        }
+    }
+
+    notOk(criteria: any, message: string = 'notOk') {
+        if (!criteria) {
+            this.pass(message)
+        } else {
+            this.fail(message, {
+                operator: 'notOk',
+                actual: criteria,
+                expected: 'falsy',
+                stack: new Error('not notOk').stack,
             })
         }
     }
@@ -85,6 +102,19 @@ export class Test {
         }
     }
 
+    notEqual<T>(actual: T, expected: T, message: string = 'notEqual') {
+        if (actual !== expected) {
+            this.pass(message)
+        } else {
+            this.fail(message, {
+                operator: 'notEqual',
+                actual,
+                expected,
+                stack: new Error('not notEqual').stack,
+            })
+        }
+    }
+
     deepEqual<T>(actual: T, expected: T, message: string = 'deepEqual') {
         if (deepEqual(actual, expected)) {
             this.pass(message)
@@ -93,7 +123,20 @@ export class Test {
                 operator: 'deepEqual',
                 actual: objectInspect(actual),
                 expected: objectInspect(expected),
-                stack: new Error('not equal').stack,
+                stack: new Error('not deepEqual').stack,
+            })
+        }
+    }
+
+    notDeepEqual<T>(actual: T, expected: T, message: string = 'notDeepEqual') {
+        if (!deepEqual(actual, expected)) {
+            this.pass(message)
+        } else {
+            this.fail(message, {
+                operator: 'notDeepEqual',
+                actual: objectInspect(actual),
+                expected: objectInspect(expected),
+                stack: new Error('not notDeepEqual').stack,
             })
         }
     }
