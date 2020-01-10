@@ -47,13 +47,13 @@ export class Test {
 
     pass(message: string) {
         passedChecks++
-        console.log(`ok ${passedChecks + failedChecks + 1} - ${message}`)
+        console.log(`ok ${passedChecks + failedChecks} ${message}`)
     }
 
     fail(message: string, extra: any = undefined) {
         failedChecks++
         this.success = false
-        console.log(`not ok ${passedChecks + failedChecks + 1} - ${message}`)
+        console.log(`not ok ${passedChecks + failedChecks} ${message}`)
         if (extra) {
             console.log(inlineYamlBlock(extra))
         }
