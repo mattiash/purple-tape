@@ -43,16 +43,16 @@ test.only = (title: string, fn: TestFunction) => {
 }
 
 export class Test {
-    protected passedChecks = 0
-    protected failedChecks = 0
+    protected success = true
 
     pass(message: string) {
-        this.passedChecks++
+        passedChecks++
         console.log(`ok ${passedChecks + failedChecks + 1} - ${message}`)
     }
 
     fail(message: string, extra: any = undefined) {
-        this.failedChecks++
+        failedChecks++
+        this.success = false
         console.log(`not ok ${passedChecks + failedChecks + 1} - ${message}`)
         if (extra) {
             console.log(inlineYamlBlock(extra))
@@ -109,12 +109,7 @@ let failedChecks = 0
 /* The name of this class shows up in all stack-traces */
 class PurpleTapeTest extends Test {
     succeeded() {
-        return this.failedChecks === 0
-    }
-
-    updateGlobal() {
-        passedChecks += this.passedChecks
-        failedChecks += this.failedChecks
+        return this.success
     }
 }
 
@@ -131,7 +126,6 @@ async function runTest(
             stack: e,
         })
     }
-    t.updateGlobal()
 }
 
 async function run() {
