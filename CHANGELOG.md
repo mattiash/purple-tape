@@ -5,6 +5,7 @@
 -   Fix output format
 -   test.skip()
 -   notOk, notEqual, notDeepEqual
+-   throws, doesNotThrow
 
 ## [3.0.1] 2020-01-10
 

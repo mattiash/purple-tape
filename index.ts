@@ -141,6 +141,49 @@ export class Test {
         }
     }
 
+    throws(
+        fn: () => void,
+        expected: RegExp = /.*/,
+        message: string = 'throws'
+    ) {
+        try {
+            fn()
+            this.fail(message)
+        } catch (err) {
+            if (err.toString().match(expected)) {
+                this.pass(message)
+            } else {
+                this.fail(message, {
+                    operator: 'throws',
+                    actual: err.toString(),
+                    expected,
+                    stack: new Error('wrong exception thrown').stack,
+                })
+            }
+        }
+    }
+
+    doesNotThrow(
+        fn: () => void,
+        expected: RegExp = /.*/,
+        message: string = 'doesNotThrow'
+    ) {
+        try {
+            fn()
+            this.pass(message)
+        } catch (err) {
+            if (err.toString().match(expected)) {
+                this.fail(message, {
+                    operator: 'doesNotThrow',
+                    actual: err.toString(),
+                    stack: new Error('unallowed exception thrown').stack,
+                })
+            } else {
+                this.pass(message)
+            }
+        }
+    }
+
     comment(message: string) {
         console.log(`# ${message}`)
     }
