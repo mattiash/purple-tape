@@ -2,13 +2,13 @@ import { inlineYamlBlock } from './lib/yaml'
 import deepEqual from 'deep-equal'
 import objectInspect from 'object-inspect'
 
-type TestFunction = (t: TestObject) => Promise<void>
+type TestFunction = (t: Test) => Promise<void>
 
 type TestEntry = [string, TestFunction]
 
 let tests = new Array<TestEntry>()
 
-export default function test(title: string, fn: TestFunction) {
+export function test(title: string, fn: TestFunction) {
     tests.push([title, fn])
 }
 
@@ -42,7 +42,7 @@ test.only = (title: string, fn: TestFunction) => {
     }
 }
 
-class TestObject {
+export class Test {
     protected passedChecks = 0
     protected failedChecks = 0
 
@@ -59,7 +59,7 @@ class TestObject {
         }
     }
 
-    ok(criteria: boolean, message: string = 'ok') {
+    ok(criteria: any, message: string = 'ok') {
         if (criteria) {
             this.pass(message)
         } else {
@@ -107,7 +107,7 @@ let passedChecks = 0
 let failedChecks = 0
 
 /* The name of this class shows up in all stack-traces */
-class PurpleTapeTest extends TestObject {
+class PurpleTapeTest extends Test {
     succeeded() {
         return this.failedChecks === 0
     }

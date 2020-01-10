@@ -1,5 +1,5 @@
 import 'source-map-support/register'
-import test from '../index'
+import { test } from '../index'
 
 test.beforeAll(async (t) => {
     t.ok(await Promise.resolve(true), 'shall run beforeAll')

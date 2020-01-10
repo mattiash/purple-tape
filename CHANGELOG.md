@@ -1,5 +1,10 @@
 # Changelog
 
+## [3.0.1] 2020-01-10
+
+-   Change module import pattern
+-   Allow argument to ok() to be any
+
 ## [3.0.0] 2020-01-10
 
 -   Rewritten from scratch without dependency on tape

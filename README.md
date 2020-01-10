@@ -12,16 +12,16 @@ not needed and not supported.
 
 Also provides
 
--   `t.beforeEach( async (t) => { ... })` which can be used to run some
+-   `test.beforeEach( async (t) => { ... })` which can be used to run some
     code before each test-case
 
--   `t.afterEach( async (t) => { ... })` which can be used to run some
+-   `test.afterEach( async (t) => { ... })` which can be used to run some
     code after each test-case.
 
--   `t.beforeAll( function * (t) { ... })` which can be used to run some code
+-   `test.beforeAll( function * (t) { ... })` which can be used to run some code
     before all test-cases.
 
--   `t.afterAll( function * (t) { ... })` which can be used to run some code
+-   `test.afterAll( function * (t) { ... })` which can be used to run some code
     after all test-cases.
 
 The reason for having the before/afterEach and before/afterAll functions is to make
@@ -40,7 +40,7 @@ benefit that it can run several test-files in parallel.
 ### Example
 
 ```typescript
-import test from 'purple-tape'
+import { test } from 'purple-tape'
 
 test.beforeAll(async (t) => {
     t.ok(await Promise.resolve(true), 'shall run beforeAll')
