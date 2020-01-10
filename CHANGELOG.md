@@ -4,6 +4,7 @@
 
 -   Change module import pattern
 -   Allow argument to ok() to be any
+-   Exit with 1 on error
 
 ## [3.0.0] 2020-01-10
 

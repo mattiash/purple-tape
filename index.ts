@@ -174,6 +174,7 @@ async function run() {
 
     if (failedChecks > 0) {
         console.log(`# fail  ${failedChecks}`)
+        process.exitCode = 1
     }
 }
 
