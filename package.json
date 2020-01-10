@@ -1,29 +1,37 @@
 {
-  "name": "purple-tape",
-  "version": "2.0.1",
-  "description": "Tape test runner using co",
-  "main": "index.js",
-  "keywords": [
-    "tape",
-    "promises"
-  ],
-  "scripts": {
-    "lint": "./node_modules/.bin/eslint index.js"
-  },
-  "author": "Mattias Holmlund",
-  "license": "MIT",
-  "dependencies": {
-    "co": "^4.6.0",
-    "tape": ">=2.0.0 <5.0.0"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/mattiash/purple-tape.git"
-  },
-  "bugs": {
-    "url": "https://github.com/mattiash/purple-tape/issues"
-  },
-  "devDependencies": {
-    "eslint": "^2.11.1"
-  }
+    "name": "purple-tape",
+    "version": "3.0.0",
+    "description": "Tape tests with async/await",
+    "main": "build/index.js",
+    "keywords": [
+        "tape",
+        "async"
+    ],
+    "scripts": {
+        "lint": "prettier -l *.ts lib/*.ts test/*.ts",
+        "prepare": "tsc",
+        "prepublishOnly": "npm run lint",
+        "test": "echo No tests"
+    },
+    "author": "Mattias Holmlund",
+    "license": "MIT",
+    "dependencies": {
+        "deep-equal": "^2.0.1",
+        "object-inspect": "^1.7.0"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/mattiash/purple-tape.git"
+    },
+    "bugs": {
+        "url": "https://github.com/mattiash/purple-tape/issues"
+    },
+    "devDependencies": {
+        "@types/deep-equal": "^1.0.1",
+        "@types/node": "^13.1.6",
+        "@types/object-inspect": "^1.6.0",
+        "prettier": "^1.19.1",
+        "source-map-support": "^0.5.16",
+        "typescript": "^3.7.4"
+    }
 }

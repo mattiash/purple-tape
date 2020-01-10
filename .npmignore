@@ -1,2 +1,6 @@
 test
 .gitignore
+*.ts
+!*.d.ts
+.prettierrc
+publish

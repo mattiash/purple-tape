@@ -4,30 +4,25 @@ Run tests with [tape](https://github.com/substack/tape) using [co](https://githu
 
 [![npm version](https://badge.fury.io/js/purple-tape.svg)](https://badge.fury.io/js/purple-tape)
 
-This code was initially forked from
-[blue-tape](https://github.com/spion/blue-tape) but has now been largely
-rewritten.
-
 ### Usage
 
 Same as tape, except that instead of supplying a test-function, you should
-supply it with a generator function that can be executed with co. The test ends
-when the promise returned by co resolves.  This means there is no need to use
-`t.plan()` or `t.end()`
+supply it with an asynchronous function. t.plan() and t.end() are thus
+not needed and not supported.
 
 Also provides
 
-- `t.beforeEach( function * (t) { ... })` which can be used to run some
-  code before each test-case
+-   `t.beforeEach( async (t) => { ... })` which can be used to run some
+    code before each test-case
 
-- `t.afterEach( function * (t) { ... })` which can be used to run some
-  code after each test-case.
+-   `t.afterEach( async (t) => { ... })` which can be used to run some
+    code after each test-case.
 
-- `t.beforeAll( function * (t) { ... })` which can be used to run some code
-  before all test-cases.
+-   `t.beforeAll( function * (t) { ... })` which can be used to run some code
+    before all test-cases.
 
-- `t.afterAll( function * (t) { ... })` which can be used to run some code
-  after all test-cases.
+-   `t.afterAll( function * (t) { ... })` which can be used to run some code
+    after all test-cases.
 
 The reason for having the before/afterEach and before/afterAll functions is to make
 it possible to run a single test-case with test.only() and to make the intention
@@ -44,62 +39,10 @@ benefit that it can run several test-files in parallel.
 
 ### Example
 
-```javascript
-const test = require('purple-tape')
-
-test.beforeAll( function * (t) {
-    t.ok(yield Promise.resolve(true), 'shall run beforeAll')
-})
-
-test.afterAll( function * (t) {
-    t.ok(yield Promise.resolve(true), 'shall run afterAll')
-})
-
-test.beforeEach( function * (t) {
-    t.ok(yield Promise.resolve(true), 'shall run beforeEach')
-})
-
-test.afterEach( function * (t) {
-    t.ok(yield Promise.resolve(true), 'shall run afterEach')
-})
-
-test('run test 1 with co', function * (t) {
-    t.ok(yield Promise.resolve(true), 'shall yield results')
-})
-
-test('run test 2 with co', function * (t) {
-    t.ok(yield Promise.resolve(true), 'shall yield results')
-})
-```
-
-will provide the following output:
-
-    TAP version 13
-    # run test 1 with co
-    ok 1 shall run beforeAll
-    ok 2 shall run beforeEach
-    ok 3 shall yield results
-    ok 4 shall run afterEach
-    # run test 2 with co
-    ok 5 shall run beforeEach
-    ok 6 shall yield results
-    ok 7 shall run afterEach
-    ok 8 shall run afterAll
-
-    1..8
-    # tests 8
-    # pass  8
-
-    # ok
-
-### Typescript example
-
-purple-tape comes with typings included:
-
 ```typescript
-import * as test from 'purple-tape'
+import test from 'purple-tape'
 
-test.beforeAll( async (t) => {
+test.beforeAll(async (t) => {
     t.ok(await Promise.resolve(true), 'shall run beforeAll')
 })
 
@@ -111,7 +54,7 @@ test.beforeEach(async (t) => {
     t.ok(await Promise.resolve(true), 'shall run beforeEach')
 })
 
-test.afterEach( async (t) => {
+test.afterEach(async (t) => {
     t.ok(await Promise.resolve(true), 'shall run afterEach')
 })
 
@@ -122,6 +65,40 @@ test('run test 1', async (t) => {
 test('run test 2', async (t) => {
     t.ok(await Promise.resolve(true), 'shall await results')
 })
+```
+
+will provide the following output:
+
+```
+TAP version 13
+
+# beforeAll
+ok 1 - shall run beforeAll
+
+# beforeEach run test 1
+ok 2 - shall run beforeEach
+
+# run test 1
+ok 3 - shall await results
+
+# afterEach run test 1
+ok 4 - shall run afterEach
+
+# beforeEach run test 2
+ok 5 - shall run beforeEach
+
+# run test 2
+ok 6 - shall await results
+
+# afterEach run test 2
+ok 7 - shall run afterEach
+
+# afterAll
+ok 8 - shall run afterAll
+
+1..8
+# tests 8
+# pass  8
 ```
 
 ### License
