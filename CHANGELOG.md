@@ -4,6 +4,7 @@
 
 -   t.skip()
 -   t.error()
+-   Add skip-option to test()
 
 ## [3.1.0] 2020-01-11
 

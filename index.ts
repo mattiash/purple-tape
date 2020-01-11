@@ -8,8 +8,31 @@ type TestEntry = [string, TestFunction]
 
 let tests = new Array<TestEntry>()
 
-export function test(title: string, fn: TestFunction) {
-    tests.push([title, fn])
+export function test(title: string, fn: TestFunction): void
+export function test(
+    title: string,
+    opts: { skip?: boolean },
+    fn: TestFunction
+): void
+export function test(
+    title: string,
+    opts: { skip?: boolean } | TestFunction,
+    fn?: TestFunction
+) {
+    if (typeof opts === 'function') {
+        fn = opts
+        opts = {}
+    }
+
+    if (fn) {
+        if (opts.skip) {
+            tests.push([`SKIP ${title}`, () => {}])
+        } else {
+            tests.push([title, fn])
+        }
+    } else {
+        throw new Error('Must supply test-function')
+    }
 }
 
 let beforeEach: TestFunction | undefined
@@ -43,7 +66,7 @@ test.only = (title: string, fn: TestFunction) => {
 }
 
 test.skip = (title: string, _fn: TestFunction) => {
-    tests.push([`SKIP ${title}`, async () => {}])
+    tests.push([`SKIP ${title}`, () => {}])
 }
 
 export class Test {
@@ -252,7 +275,7 @@ export class Test {
     }
 
     skip(message: string) {
-        this.comment(`skip ${message}`)
+        this.comment(`SKIP ${message}`)
     }
 }
 
