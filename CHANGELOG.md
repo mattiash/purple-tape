@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+-   t.skip()
+
 ## [3.1.0] 2020-01-11
 
 -   t.true, t.false

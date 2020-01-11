@@ -239,6 +239,10 @@ export class Test {
     comment(message: string) {
         console.log(`# ${message}`)
     }
+
+    skip(message: string) {
+        this.comment(`skip ${message}`)
+    }
 }
 
 let passedChecks = 0
