@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+## [3.1.0] 2020-01-11
+
+-   t.true, t.false
+-   t.deepLooseEqual, t.notDeepLooseEqual
+-   Message for pass and fail shall be optional
+-   Allow synchronous test-functions
+
 ## [3.0.2] 2020-01-10
 
 -   Fix output format
