@@ -63,26 +63,52 @@ export class Test {
         }
     }
 
-    ok(criteria: any, message: string = 'ok') {
-        if (criteria) {
+    true(actual: any, message = 'true') {
+        if (actual) {
+            this.pass(message)
+        } else {
+            this.fail(message, {
+                operator: 'true',
+                actual,
+                expected: 'truthy',
+                stack: new Error('not true').stack,
+            })
+        }
+    }
+
+    ok(actual: any, message = 'ok') {
+        if (actual) {
             this.pass(message)
         } else {
             this.fail(message, {
                 operator: 'ok',
-                actual: criteria,
+                actual,
                 expected: 'truthy',
                 stack: new Error('not ok').stack,
             })
         }
     }
 
-    notOk(criteria: any, message: string = 'notOk') {
-        if (!criteria) {
+    false(actual: any, message = 'false') {
+        if (!actual) {
+            this.pass(message)
+        } else {
+            this.fail(message, {
+                operator: 'false',
+                actual: actual,
+                expected: 'falsy',
+                stack: new Error('not false').stack,
+            })
+        }
+    }
+
+    notOk(actual: any, message = 'notOk') {
+        if (!actual) {
             this.pass(message)
         } else {
             this.fail(message, {
                 operator: 'notOk',
-                actual: criteria,
+                actual: actual,
                 expected: 'falsy',
                 stack: new Error('not notOk').stack,
             })
