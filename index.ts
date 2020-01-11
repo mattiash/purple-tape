@@ -115,7 +115,7 @@ export class Test {
         }
     }
 
-    equal<T>(actual: T, expected: T, message: string = 'equal') {
+    equal<T>(actual: T, expected: T, message = 'equal') {
         if (actual === expected) {
             this.pass(message)
         } else {
@@ -128,7 +128,7 @@ export class Test {
         }
     }
 
-    notEqual<T>(actual: T, expected: T, message: string = 'notEqual') {
+    notEqual<T>(actual: T, expected: T, message = 'notEqual') {
         if (actual !== expected) {
             this.pass(message)
         } else {
@@ -141,8 +141,8 @@ export class Test {
         }
     }
 
-    deepEqual<T>(actual: T, expected: T, message: string = 'deepEqual') {
-        if (deepEqual(actual, expected)) {
+    deepEqual<T>(actual: T, expected: T, message = 'deepEqual') {
+        if (deepEqual(actual, expected, { strict: true })) {
             this.pass(message)
         } else {
             this.fail(message, {
@@ -154,8 +154,8 @@ export class Test {
         }
     }
 
-    notDeepEqual<T>(actual: T, expected: T, message: string = 'notDeepEqual') {
-        if (!deepEqual(actual, expected)) {
+    notDeepEqual<T>(actual: T, expected: T, message = 'notDeepEqual') {
+        if (!deepEqual(actual, expected, { strict: true })) {
             this.pass(message)
         } else {
             this.fail(message, {
@@ -167,11 +167,37 @@ export class Test {
         }
     }
 
-    throws(
-        fn: () => void,
-        expected: RegExp = /.*/,
-        message: string = 'throws'
+    deepLooseEqual<T>(actual: T, expected: T, message = 'deepLooseEqual') {
+        if (deepEqual(actual, expected, { strict: false })) {
+            this.pass(message)
+        } else {
+            this.fail(message, {
+                operator: 'deepLooseEqual',
+                actual: objectInspect(actual),
+                expected: objectInspect(expected),
+                stack: new Error('not deepLooseEqual').stack,
+            })
+        }
+    }
+
+    notDeepLooseEqual<T>(
+        actual: T,
+        expected: T,
+        message = 'notDeepLooseEqual'
     ) {
+        if (!deepEqual(actual, expected, { strict: false })) {
+            this.pass(message)
+        } else {
+            this.fail(message, {
+                operator: 'notDeepLooseEqual',
+                actual: objectInspect(actual),
+                expected: objectInspect(expected),
+                stack: new Error('not notDeepLooseEqual').stack,
+            })
+        }
+    }
+
+    throws(fn: () => void, expected: RegExp = /.*/, message = 'throws') {
         try {
             fn()
             this.fail(message)
