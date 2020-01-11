@@ -236,6 +236,17 @@ export class Test {
         }
     }
 
+    error(err: Error) {
+        if (err) {
+            this.fail(err.message, {
+                operator: 'error',
+                actual: err.message,
+                stack: new Error('error'),
+            })
+        }
+        this.pass('no error')
+    }
+
     comment(message: string) {
         console.log(`# ${message}`)
     }

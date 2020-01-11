@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 -   t.skip()
+-   t.error()
 
 ## [3.1.0] 2020-01-11
 
