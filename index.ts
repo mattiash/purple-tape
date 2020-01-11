@@ -2,7 +2,7 @@ import { inlineYamlBlock } from './lib/yaml'
 import deepEqual from 'deep-equal'
 import objectInspect from 'object-inspect'
 
-type TestFunction = (t: Test) => Promise<void>
+type TestFunction = (t: Test) => void | Promise<void>
 
 type TestEntry = [string, TestFunction]
 
@@ -218,7 +218,7 @@ export class Test {
     doesNotThrow(
         fn: () => void,
         expected: RegExp = /.*/,
-        message: string = 'doesNotThrow'
+        message = 'doesNotThrow'
     ) {
         try {
             fn()
