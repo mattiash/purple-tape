@@ -49,12 +49,12 @@ test.skip = (title: string, _fn: TestFunction) => {
 export class Test {
     protected success = true
 
-    pass(message: string) {
+    pass(message = 'pass') {
         passedChecks++
         console.log(`ok ${passedChecks + failedChecks} ${message}`)
     }
 
-    fail(message: string, extra: any = undefined) {
+    fail(message = 'fail', extra: any = undefined) {
         failedChecks++
         this.success = false
         console.log(`not ok ${passedChecks + failedChecks} ${message}`)
