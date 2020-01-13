@@ -315,7 +315,8 @@ async function run() {
         const t = new PurpleTapeTest()
         await runTest('beforeAll', beforeAll, t)
         if (!t.succeeded()) {
-            process.exit(1)
+            summarize()
+            return
         }
     }
 
@@ -338,6 +339,10 @@ async function run() {
         await runTest('afterAll', afterAll)
     }
 
+    summarize()
+}
+
+function summarize() {
     console.log(`\n1..${passedChecks + failedChecks}`)
     console.log(`# tests ${passedChecks + failedChecks}`)
     console.log(`# pass  ${passedChecks}`)

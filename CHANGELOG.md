@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+-   Print summary even if beforeAll fails
+
 ## [3.2.0] 2020-01-11
 
 -   t.skip()
