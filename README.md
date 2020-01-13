@@ -1,14 +1,13 @@
 # purple-tape
 
-Run tests with [tape](https://github.com/substack/tape) using [co](https://github.com/tj/co).
+Run tests with an api similar to [tape](https://www.npmjs.com/package/tape) but utilizing async/await.
 
 [![npm version](https://badge.fury.io/js/purple-tape.svg)](https://badge.fury.io/js/purple-tape)
 
 ### Usage
 
-Same as tape, except that instead of supplying a test-function, you should
-supply it with an asynchronous function. t.plan() and t.end() are thus
-not needed and not supported.
+Same as tape, except that the test-functions can be asynchronous.
+t.plan() and t.end() are thus not needed and not supported.
 
 Also provides
 
