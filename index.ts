@@ -72,11 +72,17 @@ test.skip = (title: string, _fn: TestFunction) => {
 export class Test {
     protected success = true
 
+    /**
+     * Print a message that a check passed.
+     */
     pass(message = 'pass') {
         passedChecks++
         console.log(`ok ${passedChecks + failedChecks} ${message}`)
     }
 
+    /**
+     * Print a message that a check has failed
+     */
     fail(message = 'fail', extra: any = undefined) {
         failedChecks++
         this.success = false
@@ -86,6 +92,9 @@ export class Test {
         }
     }
 
+    /**
+     * Check that **actual** is truthy.
+     */
     true(actual: any, message = 'true') {
         if (actual) {
             this.pass(message)
@@ -99,6 +108,9 @@ export class Test {
         }
     }
 
+    /**
+     * Check that **actual** is truthy.
+     */
     ok(actual: any, message = 'ok') {
         if (actual) {
             this.pass(message)
@@ -112,6 +124,9 @@ export class Test {
         }
     }
 
+    /**
+     * Check that **actual** is falsy.
+     */
     false(actual: any, message = 'false') {
         if (!actual) {
             this.pass(message)
@@ -125,6 +140,9 @@ export class Test {
         }
     }
 
+    /**
+     * Check that **actual** is falsy.
+     */
     notOk(actual: any, message = 'notOk') {
         if (!actual) {
             this.pass(message)
@@ -138,6 +156,9 @@ export class Test {
         }
     }
 
+    /**
+     * Check that **actual** === **expected**.
+     */
     equal<T>(actual: T, expected: T, message = 'equal') {
         if (actual === expected) {
             this.pass(message)
@@ -151,6 +172,9 @@ export class Test {
         }
     }
 
+    /**
+     * Check that **actual** !== **expected**.
+     */
     notEqual<T>(actual: T, expected: T, message = 'notEqual') {
         if (actual !== expected) {
             this.pass(message)
@@ -164,6 +188,11 @@ export class Test {
         }
     }
 
+    /**
+     * Check that **actual** is strict deep-equal to **expected**.
+     * "Strict" means that leaf-nodes are compared with ===.
+     * Maps and Sets are compared for content only - insertion order does not matter.
+     */
     deepEqual<T>(actual: T, expected: T, message = 'deepEqual') {
         if (deepEqual(actual, expected, { strict: true })) {
             this.pass(message)
@@ -177,6 +206,11 @@ export class Test {
         }
     }
 
+    /**
+     * Check that **actual** is not strict deep-equal to **expected**.
+     * "Strict" means that leaf-nodes are compared with ===.
+     * Maps and Sets are compared for content only - insertion order does not matter.
+     */
     notDeepEqual<T>(actual: T, expected: T, message = 'notDeepEqual') {
         if (!deepEqual(actual, expected, { strict: true })) {
             this.pass(message)
@@ -190,6 +224,11 @@ export class Test {
         }
     }
 
+    /**
+     * Check that **actual** is loose deep-equal to **expected**.
+     * "Loose" means that leaf-nodes are compared with ==.
+     * Maps and Sets are compared for content only - insertion order does not matter.
+     */
     deepLooseEqual<T>(actual: T, expected: T, message = 'deepLooseEqual') {
         if (deepEqual(actual, expected, { strict: false })) {
             this.pass(message)
@@ -203,6 +242,11 @@ export class Test {
         }
     }
 
+    /**
+     * Check that **actual** is not loose deep-equal to **expected**.
+     * "Loose" means that leaf-nodes are compared with ==.
+     * Maps and Sets are compared for content only - insertion order does not matter.
+     */
     notDeepLooseEqual<T>(
         actual: T,
         expected: T,
@@ -220,6 +264,10 @@ export class Test {
         }
     }
 
+    /**
+     * Check that **fn** throws an error. **expected** is a regexp that should
+     * match the toString() of the error if specified.
+     */
     throws(fn: () => void, expected: RegExp = /.*/, message = 'throws') {
         try {
             fn()
@@ -238,6 +286,14 @@ export class Test {
         }
     }
 
+    /**
+     * Check that **fn** either
+     * - does not throw an error or
+     * - throws an error whose toString() does not match the **expected** regexp
+     *
+     * In other words, the check is ok if **fn** does not throw an error whose toString()
+     * matches **regexp**
+     */
     doesNotThrow(
         fn: () => void,
         expected: RegExp = /.*/,
@@ -259,6 +315,10 @@ export class Test {
         }
     }
 
+    /**
+     * Checks that **err** is falsy. If err is not falsy,
+     * it reports a failure with the text from err.message
+     */
     error(err: Error) {
         if (err) {
             this.fail(err.message, {
@@ -270,10 +330,16 @@ export class Test {
         this.pass('no error')
     }
 
+    /**
+     * Logs a comment
+     */
     comment(message: string) {
         console.log(`# ${message}`)
     }
 
+    /**
+     * Logs a message indicating that a check was skipped.
+     */
     skip(message: string) {
         this.comment(`SKIP ${message}`)
     }
