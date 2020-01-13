@@ -2,7 +2,10 @@
 
 ## [Unreleased]
 
+## [3.2.1] 2020-01-11
+
 -   Print summary even if beforeAll fails
+-   Documentation
 
 ## [3.2.0] 2020-01-11
 
