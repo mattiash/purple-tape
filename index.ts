@@ -159,7 +159,7 @@ export class Test {
     /**
      * Check that **actual** === **expected**.
      */
-    equal<T>(actual: T, expected: T, message = 'equal') {
+    equal<T>(actual: T, expected: T, message = `${actual} === ${expected}`) {
         if (actual === expected) {
             this.pass(message)
         } else {
@@ -175,7 +175,7 @@ export class Test {
     /**
      * Check that **actual** !== **expected**.
      */
-    notEqual<T>(actual: T, expected: T, message = 'notEqual') {
+    notEqual<T>(actual: T, expected: T, message = `${actual} !== ${expected}`) {
         if (actual !== expected) {
             this.pass(message)
         } else {
@@ -312,6 +312,86 @@ export class Test {
             } else {
                 this.pass(message)
             }
+        }
+    }
+
+    /**
+     * Check that **actual** < **expected**
+     */
+    lt<T extends number | string>(
+        actual: T,
+        expected: T,
+        message = `${actual} < ${expected}`
+    ) {
+        if (actual < expected) {
+            this.pass(message)
+        } else {
+            this.fail(message, {
+                operator: 'lt',
+                actual,
+                expected,
+                stack: new Error('not less than').stack,
+            })
+        }
+    }
+
+    /**
+     * Check that **actual** <= **expected**
+     */
+    lte<T extends number | string>(
+        actual: T,
+        expected: T,
+        message = `${actual} <= ${expected}`
+    ) {
+        if (actual <= expected) {
+            this.pass(message)
+        } else {
+            this.fail(message, {
+                operator: 'lte',
+                actual,
+                expected,
+                stack: new Error('not less than or equal').stack,
+            })
+        }
+    }
+
+    /**
+     * Check that **actual** > **expected**
+     */
+    gt<T extends number | string>(
+        actual: T,
+        expected: T,
+        message = `${actual} > ${expected}`
+    ) {
+        if (actual > expected) {
+            this.pass(message)
+        } else {
+            this.fail(message, {
+                operator: 'gt',
+                actual,
+                expected,
+                stack: new Error('not greater than').stack,
+            })
+        }
+    }
+
+    /**
+     * Check that **actual** >= **expected**
+     */
+    gte<T extends number | string>(
+        actual: T,
+        expected: T,
+        message = `${actual} >= ${expected}`
+    ) {
+        if (actual >= expected) {
+            this.pass(message)
+        } else {
+            this.fail(message, {
+                operator: 'gte',
+                actual,
+                expected,
+                stack: new Error('not greater than or equal').stack,
+            })
         }
     }
 

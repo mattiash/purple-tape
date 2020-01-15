@@ -248,6 +248,98 @@ test('notDeepLooseEqual', (t) => {
     t.pass('notDeepLooseEqual passed')
 })
 
+test('lt', (t) => {
+    const tt = new TestableTest()
+    tt.lt(1, 2)
+    tt.verify(1, 0)
+
+    tt.lt(2, 1)
+    tt.verify(0, 1)
+
+    tt.lt(1, 1)
+    tt.verify(0, 1)
+
+    tt.lt('a', 'b')
+    tt.verify(1, 0)
+
+    tt.lt('b', 'a')
+    tt.verify(0, 1)
+
+    tt.lt('a', 'a')
+    tt.verify(0, 1)
+
+    t.pass('lt passed')
+})
+
+test('lte', (t) => {
+    const tt = new TestableTest()
+    tt.lte(1, 2)
+    tt.verify(1, 0)
+
+    tt.lte(2, 1)
+    tt.verify(0, 1)
+
+    tt.lte(1, 1)
+    tt.verify(1, 0)
+
+    tt.lte('a', 'b')
+    tt.verify(1, 0)
+
+    tt.lte('b', 'a')
+    tt.verify(0, 1)
+
+    tt.lte('a', 'a')
+    tt.verify(1, 0)
+
+    t.pass('lte passed')
+})
+
+test('gt', (t) => {
+    const tt = new TestableTest()
+    tt.gt(2, 1)
+    tt.verify(1, 0)
+
+    tt.gt(1, 2)
+    tt.verify(0, 1)
+
+    tt.gt(1, 1)
+    tt.verify(0, 1)
+
+    tt.gt('b', 'a')
+    tt.verify(1, 0)
+
+    tt.gt('a', 'b')
+    tt.verify(0, 1)
+
+    tt.gt('a', 'a')
+    tt.verify(0, 1)
+
+    t.pass('gt passed')
+})
+
+test('gte', (t) => {
+    const tt = new TestableTest()
+    tt.gte(2, 1)
+    tt.verify(1, 0)
+
+    tt.gte(1, 2)
+    tt.verify(0, 1)
+
+    tt.gte(1, 1)
+    tt.verify(1, 0)
+
+    tt.gte('b', 'a')
+    tt.verify(1, 0)
+
+    tt.gte('a', 'b')
+    tt.verify(0, 1)
+
+    tt.gte('a', 'a')
+    tt.verify(1, 0)
+
+    t.pass('gte passed')
+})
+
 test('throws', (t) => {
     const tt = new TestableTest()
     tt.throws(() => {

@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 -   Test verification functions
+-   New verfication functions lt, lte, gt, and gte
 
 ## [3.2.1] 2020-01-11
 
