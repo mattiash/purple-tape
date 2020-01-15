@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+-   Test verification functions
+
 ## [3.2.1] 2020-01-11
 
 -   Print summary even if beforeAll fails

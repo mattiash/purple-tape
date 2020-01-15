@@ -319,15 +319,16 @@ export class Test {
      * Checks that **err** is falsy. If err is not falsy,
      * it reports a failure with the text from err.message
      */
-    error(err: Error) {
+    error(err: any) {
         if (err) {
             this.fail(err.message, {
                 operator: 'error',
                 actual: err.message,
                 stack: new Error('error'),
             })
+        } else {
+            this.pass('no error')
         }
-        this.pass('no error')
     }
 
     /**
