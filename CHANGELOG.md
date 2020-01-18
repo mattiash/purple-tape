@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [3.4.0] 2020-01-18
+
 -   Add a bail() method
 -   bail() if beforeAll fails
 -   bail() if test calls t after returning
