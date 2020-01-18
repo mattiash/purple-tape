@@ -71,6 +71,7 @@ test.skip = (title: string, _fn: TestFunction) => {
 
 export class Test {
     protected success = true
+    protected ended = false
 
     /**
      * Print a message that a check passed.
@@ -429,27 +430,33 @@ export class Test {
      * Print a Bail out! message and process.exit(1) immediately
      */
     bail(message = '') {
-        console.log(`Bail out! ${message}`)
-        process.exit(1)
+        bail(message)
     }
 }
 
 let passedChecks = 0
 let failedChecks = 0
 
+function bail(message: string) {
+    console.log(`\nBail out! ${message}`)
+    process.exit(1)
+}
+
 /* The name of this class shows up in all stack-traces */
 class PurpleTapeTest extends Test {
     succeeded() {
         return this.success
     }
+
+    endTest() {
+        this.ended = true
+    }
 }
 
-async function runTest(
-    title: string,
-    fn: TestFunction,
-    t = new PurpleTapeTest()
-) {
+async function runTest(title: string, fn: TestFunction) {
+    const t = new PurpleTapeTest()
     console.log(`\n# ${title}`)
+
     try {
         await fn(t)
     } catch (e) {
@@ -457,6 +464,8 @@ async function runTest(
             stack: e,
         })
     }
+    t.endTest()
+    return t.succeeded()
 }
 
 async function run() {
@@ -467,18 +476,15 @@ async function run() {
     }
 
     if (beforeAll) {
-        const t = new PurpleTapeTest()
-        await runTest('beforeAll', beforeAll, t)
-        if (!t.succeeded()) {
-            summarize()
-            return
+        if (!(await runTest('beforeAll', beforeAll))) {
+            bail('beforeAll failed')
         }
     }
 
     for (let [title, fn] of tests) {
         const t = new PurpleTapeTest()
         if (beforeEach) {
-            await runTest(`beforeEach ${title}`, beforeEach, t)
+            await runTest(`beforeEach ${title}`, beforeEach)
         }
 
         if (t.succeeded()) {
