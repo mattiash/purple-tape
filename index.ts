@@ -73,10 +73,14 @@ export class Test {
     protected success = true
     protected ended = false
 
+    constructor(private readonly title: string) {}
     /**
      * Print a message that a check passed.
      */
     pass(message = 'pass') {
+        if (this.ended) {
+            this.bailWithStack(new Error('test has already ended'))
+        }
         passedChecks++
         console.log(`ok ${passedChecks + failedChecks} ${message}`)
     }
@@ -85,6 +89,9 @@ export class Test {
      * Print a message that a check has failed
      */
     fail(message = 'fail', extra: any = undefined) {
+        if (this.ended) {
+            this.bailWithStack(new Error('test has already ended'))
+        }
         failedChecks++
         this.success = false
         console.log(`not ok ${passedChecks + failedChecks} ${message}`)
@@ -405,7 +412,7 @@ export class Test {
             this.fail(err.message, {
                 operator: 'error',
                 actual: err.message,
-                stack: new Error('error'),
+                stack: new Error('error').stack,
             })
         } else {
             this.pass('no error')
@@ -416,6 +423,9 @@ export class Test {
      * Logs a comment
      */
     comment(message: string) {
+        if (this.ended) {
+            this.bailWithStack(new Error('test ended'))
+        }
         console.log(`# ${message}`)
     }
 
@@ -431,6 +441,13 @@ export class Test {
      */
     bail(message = '') {
         bail(message)
+    }
+
+    private bailWithStack(err: Error) {
+        console.log(`\nForbidden call to test-method after test ended`)
+        console.log(`Test: "${this.title}"`)
+        console.log(`Stack: ${err.stack}`)
+        this.bail('Test has a bug...')
     }
 }
 
@@ -454,7 +471,7 @@ class PurpleTapeTest extends Test {
 }
 
 async function runTest(title: string, fn: TestFunction) {
-    const t = new PurpleTapeTest()
+    const t = new PurpleTapeTest(title)
     console.log(`\n# ${title}`)
 
     try {
@@ -482,12 +499,15 @@ async function run() {
     }
 
     for (let [title, fn] of tests) {
-        const t = new PurpleTapeTest()
+        let beforeEachSucceded = true
         if (beforeEach) {
-            await runTest(`beforeEach ${title}`, beforeEach)
+            beforeEachSucceded = await runTest(
+                `beforeEach ${title}`,
+                beforeEach
+            )
         }
 
-        if (t.succeeded()) {
+        if (beforeEachSucceded) {
             await runTest(title, fn)
         }
 

@@ -3,6 +3,8 @@
 ## [Unreleased]
 
 -   Add a bail() method
+-   bail() if beforeAll fails
+-   bail() if test calls t after returning
 
 ## [3.3.0] 2020-01-15
 

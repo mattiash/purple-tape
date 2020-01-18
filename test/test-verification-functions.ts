@@ -22,7 +22,7 @@ class TestableTest extends Test {
 }
 
 test('true', (t) => {
-    const tt = new TestableTest()
+    const tt = new TestableTest('')
     tt.true(true)
     tt.verify(1, 0)
 
@@ -39,7 +39,7 @@ test('true', (t) => {
 })
 
 test('ok', (t) => {
-    const tt = new TestableTest()
+    const tt = new TestableTest('')
     tt.ok(true)
     tt.verify(1, 0)
 
@@ -56,7 +56,7 @@ test('ok', (t) => {
 })
 
 test('false', (t) => {
-    const tt = new TestableTest()
+    const tt = new TestableTest('')
     tt.false(true)
     tt.verify(0, 1)
 
@@ -73,7 +73,7 @@ test('false', (t) => {
 })
 
 test('notOk', (t) => {
-    const tt = new TestableTest()
+    const tt = new TestableTest('')
     tt.notOk(true)
     tt.verify(0, 1)
 
@@ -90,7 +90,7 @@ test('notOk', (t) => {
 })
 
 test('equal', (t) => {
-    const tt = new TestableTest()
+    const tt = new TestableTest('')
     tt.equal(1, 1)
     tt.verify(1, 0)
 
@@ -107,7 +107,7 @@ test('equal', (t) => {
 })
 
 test('notEqual', (t) => {
-    const tt = new TestableTest()
+    const tt = new TestableTest('')
     tt.notEqual(1, 1)
     tt.verify(0, 1)
 
@@ -124,7 +124,7 @@ test('notEqual', (t) => {
 })
 
 test('deepEqual', (t) => {
-    const tt = new TestableTest()
+    const tt = new TestableTest('')
     tt.deepEqual({}, {})
     tt.verify(1, 0)
 
@@ -156,7 +156,7 @@ test('deepEqual', (t) => {
 })
 
 test('notDeepEqual', (t) => {
-    const tt = new TestableTest()
+    const tt = new TestableTest('')
     tt.notDeepEqual({}, {})
     tt.verify(0, 1)
 
@@ -185,7 +185,7 @@ test('notDeepEqual', (t) => {
 })
 
 test('deepLooseEqual', (t) => {
-    const tt = new TestableTest()
+    const tt = new TestableTest('')
     tt.deepLooseEqual({}, {})
     tt.verify(1, 0)
 
@@ -217,7 +217,7 @@ test('deepLooseEqual', (t) => {
 })
 
 test('notDeepLooseEqual', (t) => {
-    const tt = new TestableTest()
+    const tt = new TestableTest('')
     tt.notDeepLooseEqual({}, {})
     tt.verify(0, 1)
 
@@ -249,7 +249,7 @@ test('notDeepLooseEqual', (t) => {
 })
 
 test('lt', (t) => {
-    const tt = new TestableTest()
+    const tt = new TestableTest('')
     tt.lt(1, 2)
     tt.verify(1, 0)
 
@@ -272,7 +272,7 @@ test('lt', (t) => {
 })
 
 test('lte', (t) => {
-    const tt = new TestableTest()
+    const tt = new TestableTest('')
     tt.lte(1, 2)
     tt.verify(1, 0)
 
@@ -295,7 +295,7 @@ test('lte', (t) => {
 })
 
 test('gt', (t) => {
-    const tt = new TestableTest()
+    const tt = new TestableTest('')
     tt.gt(2, 1)
     tt.verify(1, 0)
 
@@ -318,7 +318,7 @@ test('gt', (t) => {
 })
 
 test('gte', (t) => {
-    const tt = new TestableTest()
+    const tt = new TestableTest('')
     tt.gte(2, 1)
     tt.verify(1, 0)
 
@@ -341,7 +341,7 @@ test('gte', (t) => {
 })
 
 test('throws', (t) => {
-    const tt = new TestableTest()
+    const tt = new TestableTest('')
     tt.throws(() => {
         throw new Error()
     })
@@ -364,7 +364,7 @@ test('throws', (t) => {
 })
 
 test('doesNotThrow', (t) => {
-    const tt = new TestableTest()
+    const tt = new TestableTest('')
     tt.doesNotThrow(() => {
         throw new Error()
     })
@@ -387,7 +387,7 @@ test('doesNotThrow', (t) => {
 })
 
 test('error', (t) => {
-    const tt = new TestableTest()
+    const tt = new TestableTest('')
     tt.error(false)
     tt.verify(1, 0)
     console.log(1)
