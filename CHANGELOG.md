@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+-   Add a bail() method
+
 ## [3.3.0] 2020-01-15
 
 -   Test verification functions

@@ -424,6 +424,14 @@ export class Test {
     skip(message: string) {
         this.comment(`SKIP ${message}`)
     }
+
+    /**
+     * Print a Bail out! message and process.exit(1) immediately
+     */
+    bail(message = '') {
+        console.log(`Bail out! ${message}`)
+        process.exit(1)
+    }
 }
 
 let passedChecks = 0
