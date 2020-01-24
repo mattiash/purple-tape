@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [3.4.1] 2020-01-24
+
 -   Don't run beforeEach/afterEach for skipped tests
 
 ## [3.4.0] 2020-01-18
