@@ -28,3 +28,7 @@ test('run test 1', async (t) => {
 test('run test 2', async (t) => {
     t.ok(await Promise.resolve(true), 'shall await results')
 })
+
+test.skip('shall be skipped', (t) => {
+    t.fail('fails')
+})

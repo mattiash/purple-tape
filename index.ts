@@ -4,7 +4,7 @@ import objectInspect from 'object-inspect'
 
 type TestFunction = (t: Test) => void | Promise<void>
 
-type TestEntry = [string, TestFunction]
+type TestEntry = [string, TestFunction | undefined]
 
 let tests = new Array<TestEntry>()
 
@@ -66,7 +66,7 @@ test.only = (title: string, fn: TestFunction) => {
 }
 
 test.skip = (title: string, _fn: TestFunction) => {
-    tests.push([`SKIP ${title}`, () => {}])
+    tests.push([`SKIP ${title}`, undefined])
 }
 
 export class Test {
@@ -499,23 +499,26 @@ async function run() {
     }
 
     for (let [title, fn] of tests) {
-        let beforeEachSucceded = true
-        if (beforeEach) {
-            beforeEachSucceded = await runTest(
-                `beforeEach ${title}`,
-                beforeEach
-            )
-        }
+        if (fn) {
+            let beforeEachSucceded = true
+            if (beforeEach) {
+                beforeEachSucceded = await runTest(
+                    `beforeEach ${title}`,
+                    beforeEach
+                )
+            }
 
-        if (beforeEachSucceded) {
-            await runTest(title, fn)
-        }
+            if (beforeEachSucceded) {
+                await runTest(title, fn)
+            }
 
-        if (afterEach) {
-            await runTest(`afterEach ${title}`, afterEach)
+            if (afterEach) {
+                await runTest(`afterEach ${title}`, afterEach)
+            }
+        } else {
+            await runTest(title, () => {})
         }
     }
-
     if (afterAll) {
         await runTest('afterAll', afterAll)
     }

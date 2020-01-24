@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+-   Don't run beforeEach/afterEach for skipped tests
+
 ## [3.4.0] 2020-01-18
 
 -   Add a bail() method
