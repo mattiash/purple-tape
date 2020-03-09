@@ -73,7 +73,7 @@ export class Test {
     protected success = true
     protected ended = false
 
-    constructor(private readonly title: string) {}
+    constructor(readonly title: string) {}
     /**
      * Print a message that a check passed.
      */
