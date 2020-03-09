@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [3.4.2] 2020-03-09
+
+-   Make title field public
+
 ## [3.4.1] 2020-01-24
 
 -   Don't run beforeEach/afterEach for skipped tests
