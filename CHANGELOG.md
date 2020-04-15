@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+-   Generate junit xml output
+
 ## [3.4.2] 2020-03-09
 
 -   Make title field public

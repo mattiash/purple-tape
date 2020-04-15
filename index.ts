@@ -1,6 +1,9 @@
 import { inlineYamlBlock } from './lib/yaml'
 import deepEqual from 'deep-equal'
 import objectInspect from 'object-inspect'
+import { TestReport, TestEntryResult, generateXunit } from './lib/xunit'
+import { basename } from 'path'
+import { writeFileSync } from 'fs'
 
 type TestFunction = (t: Test) => void | Promise<void>
 
@@ -72,8 +75,11 @@ test.skip = (title: string, _fn: TestFunction) => {
 export class Test {
     protected success = true
     protected ended = false
+    protected assertions = 0
+    protected firstErrorMessage: string | undefined
 
     constructor(readonly title: string) {}
+
     /**
      * Print a message that a check passed.
      */
@@ -81,6 +87,7 @@ export class Test {
         if (this.ended) {
             this.bailWithStack(new Error('test has already ended'))
         }
+        this.assertions++
         passedChecks++
         console.log(`ok ${passedChecks + failedChecks} ${message}`)
     }
@@ -92,8 +99,12 @@ export class Test {
         if (this.ended) {
             this.bailWithStack(new Error('test has already ended'))
         }
+        this.assertions++
         failedChecks++
         this.success = false
+        this.firstErrorMessage =
+            this.firstErrorMessage ||
+            message + (extra ? `\n${inlineYamlBlock(extra)}` : '')
         console.log(`not ok ${passedChecks + failedChecks} ${message}`)
         if (extra) {
             console.log(inlineYamlBlock(extra))
@@ -461,12 +472,24 @@ function bail(message: string) {
 
 /* The name of this class shows up in all stack-traces */
 class PurpleTapeTest extends Test {
+    private readonly startTime = Date.now()
+
     succeeded() {
         return this.success
     }
 
     endTest() {
         this.ended = true
+    }
+
+    testResult(): TestEntryResult {
+        return {
+            name: this.title,
+            assertions: this.assertions,
+            status: this.success ? 'success' : 'error',
+            durationSec: (Date.now() - this.startTime) / 1000,
+            message: this.firstErrorMessage,
+        }
     }
 }
 
@@ -482,18 +505,27 @@ async function runTest(title: string, fn: TestFunction) {
         })
     }
     t.endTest()
-    return t.succeeded()
+
+    return t.testResult()
 }
 
 async function run() {
     console.log('TAP version 13')
+    let tr: TestReport = {
+        name:
+            process.env.PT_XUNIT_NAME || basename(require.main?.filename || ''),
+        startTime: new Date(),
+        entries: [],
+    }
 
     if (onlyTest) {
         tests = [onlyTest]
     }
 
     if (beforeAll) {
-        if (!(await runTest('beforeAll', beforeAll))) {
+        const testResult = await runTest('beforeAll', beforeAll)
+        tr.entries.push(testResult)
+        if (testResult.status !== 'success') {
             bail('beforeAll failed')
         }
     }
@@ -502,31 +534,43 @@ async function run() {
         if (fn) {
             let beforeEachSucceded = true
             if (beforeEach) {
-                beforeEachSucceded = await runTest(
+                const testResult = await runTest(
                     `beforeEach ${title}`,
                     beforeEach
                 )
+                tr.entries.push(testResult)
+                beforeEachSucceded = testResult.status === 'success'
             }
 
             if (beforeEachSucceded) {
-                await runTest(title, fn)
+                const testResult = await runTest(title, fn)
+                tr.entries.push(testResult)
             }
 
             if (afterEach) {
-                await runTest(`afterEach ${title}`, afterEach)
+                const testResult = await runTest(
+                    `afterEach ${title}`,
+                    afterEach
+                )
+                tr.entries.push(testResult)
             }
         } else {
-            await runTest(title, () => {})
+            const testResult = await runTest(title, () => {})
+            tr.entries.push(testResult)
         }
     }
     if (afterAll) {
-        await runTest('afterAll', afterAll)
+        const testResult = await runTest('afterAll', afterAll)
+        tr.entries.push(testResult)
     }
 
-    summarize()
+    summarize(tr)
 }
 
-function summarize() {
+function summarize(tr: TestReport) {
+    if (process.env.PT_XUNIT_FILE) {
+        writeFileSync(process.env.PT_XUNIT_FILE, generateXunit(tr))
+    }
     console.log(`\n1..${passedChecks + failedChecks}`)
     console.log(`# tests ${passedChecks + failedChecks}`)
     console.log(`# pass  ${passedChecks}`)

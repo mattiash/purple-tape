@@ -100,7 +100,19 @@ ok 8 - shall run afterAll
 # pass  8
 ```
 
-# License
+## Generating junit xml output
+
+To generate junit xml according to https://llg.cubic.org/docs/junit/,
+set the environment variable `PT_XUNIT_FILE` to the output filename.
+
+The `name` property for the testsuites and testsuite tags is the basename of the testfile.
+To use another name, set `PT_XUNIT_NAME`.
+
+Note that the junit output only lists all test()-calls and the last error from them (if any).
+It does not include the result from each individual assertion or
+the console output from the test.
+
+## License
 
 MIT License
 
