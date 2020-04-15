@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## 3.5.0 2020-04-15
+
 -   Generate junit xml output
 
 ## [3.4.2] 2020-03-09
