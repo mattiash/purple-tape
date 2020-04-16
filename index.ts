@@ -5,6 +5,10 @@ import { TestReport, TestEntryResult, generateXunit } from './lib/xunit'
 import { basename } from 'path'
 import { writeFileSync } from 'fs'
 
+// Save original Date in case sinon overrides it
+const originalNowFn = Date.now
+const OriginalDate = Date
+
 type TestFunction = (t: Test) => void | Promise<void>
 
 type TestEntry = [string, TestFunction | undefined]
@@ -472,7 +476,7 @@ function bail(message: string) {
 
 /* The name of this class shows up in all stack-traces */
 class PurpleTapeTest extends Test {
-    private readonly startTime = Date.now()
+    private readonly startTime = originalNowFn()
 
     succeeded() {
         return this.success
@@ -487,7 +491,7 @@ class PurpleTapeTest extends Test {
             name: this.title,
             assertions: this.assertions,
             status: this.success ? 'success' : 'error',
-            durationSec: (Date.now() - this.startTime) / 1000,
+            durationSec: (originalNowFn() - this.startTime) / 1000,
             message: this.firstErrorMessage,
         }
     }
@@ -514,7 +518,7 @@ async function run() {
     let tr: TestReport = {
         name:
             process.env.PT_XUNIT_NAME || basename(require.main?.filename || ''),
-        startTime: new Date(),
+        startTime: new OriginalDate(),
         entries: [],
     }
 

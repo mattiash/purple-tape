@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+-   Save Date object in case sinon overrides it later
+
 ## 3.5.0 2020-04-15
 
 -   Generate junit xml output
