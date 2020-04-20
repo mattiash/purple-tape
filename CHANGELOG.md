@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 -   Summarize time-field correctly
+-   Report errors and failures separately
 
 ## [3.5.1] 2020-04-16
 

@@ -80,7 +80,8 @@ export class Test {
     protected success = true
     protected ended = false
     protected assertions = 0
-    protected firstErrorMessage: string | undefined
+    protected firstNonSuccessMessage: string | undefined
+    protected firstNonSuccessStatus: 'error' | 'failed' | undefined
 
     constructor(readonly title: string) {}
 
@@ -105,10 +106,35 @@ export class Test {
         }
         this.assertions++
         failedChecks++
-        this.success = false
-        this.firstErrorMessage =
-            this.firstErrorMessage ||
-            message + (extra ? `\n${inlineYamlBlock(extra)}` : '')
+        if (this.success) {
+            this.success = false
+            this.firstNonSuccessMessage =
+                message + (extra ? `\n${inlineYamlBlock(extra)}` : '')
+            this.firstNonSuccessStatus = 'failed'
+        }
+        console.log(`not ok ${passedChecks + failedChecks} ${message}`)
+        if (extra) {
+            console.log(inlineYamlBlock(extra))
+        }
+    }
+
+    /**
+     * Report that the test has thrown an error.
+     */
+    errorOut(message: string, extra: any = undefined) {
+        if (this.ended) {
+            this.bailWithStack(new Error('test has already ended'))
+        }
+
+        this.assertions++
+        erroredChecks++
+
+        if (this.success) {
+            this.success = false
+            this.firstNonSuccessMessage =
+                message + (extra ? `\n${inlineYamlBlock(extra)}` : '')
+            this.firstNonSuccessStatus = 'error'
+        }
         console.log(`not ok ${passedChecks + failedChecks} ${message}`)
         if (extra) {
             console.log(inlineYamlBlock(extra))
@@ -468,6 +494,7 @@ export class Test {
 
 let passedChecks = 0
 let failedChecks = 0
+let erroredChecks = 0
 
 function bail(message: string) {
     console.log(`\nBail out! ${message}`)
@@ -487,12 +514,22 @@ class PurpleTapeTest extends Test {
     }
 
     testResult(): TestEntryResult {
-        return {
-            name: this.title,
-            assertions: this.assertions,
-            status: this.success ? 'success' : 'error',
-            durationSec: (originalNowFn() - this.startTime) / 1000,
-            message: this.firstErrorMessage,
+        if (this.firstNonSuccessStatus) {
+            return {
+                name: this.title,
+                assertions: this.assertions,
+                status: this.firstNonSuccessStatus,
+                durationMs: originalNowFn() - this.startTime,
+                message: this.firstNonSuccessMessage,
+            }
+        } else {
+            return {
+                name: this.title,
+                assertions: this.assertions,
+                status: 'success',
+                durationMs: originalNowFn() - this.startTime,
+                message: this.firstNonSuccessMessage,
+            }
         }
     }
 }
@@ -504,8 +541,8 @@ async function runTest(title: string, fn: TestFunction) {
     try {
         await fn(t)
     } catch (e) {
-        t.fail('shall not throw exception', {
-            stack: e,
+        t.errorOut('shall not throw exception', {
+            stack: e.stack,
         })
     }
     t.endTest()
@@ -575,12 +612,12 @@ function summarize(tr: TestReport) {
     if (process.env.PT_XUNIT_FILE) {
         writeFileSync(process.env.PT_XUNIT_FILE, generateXunit(tr))
     }
-    console.log(`\n1..${passedChecks + failedChecks}`)
-    console.log(`# tests ${passedChecks + failedChecks}`)
+    console.log(`\n1..${passedChecks + failedChecks + erroredChecks}`)
+    console.log(`# tests ${passedChecks + failedChecks + erroredChecks}`)
     console.log(`# pass  ${passedChecks}`)
 
-    if (failedChecks > 0) {
-        console.log(`# fail  ${failedChecks}`)
+    if (failedChecks + erroredChecks > 0) {
+        console.log(`# fail  ${failedChecks + erroredChecks}`)
         process.exitCode = 1
     }
 }
