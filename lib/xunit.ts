@@ -1,6 +1,6 @@
 export type TestEntryResult = {
     name: string
-    durationSec: number
+    durationMs: number
     assertions: number
     status: 'success' | 'failed' | 'error' | 'skipped'
     message: string | undefined // Details for failed or error status
@@ -19,10 +19,11 @@ export function generateXunit(tr: TestReport) {
     let skipped = 0
     let errors = 0
     let failures = 0
-    let durationSec = 0
+    let durationMs = 0
 
     for (let test of tr.entries) {
         tests++
+        durationMs += test.durationMs
         switch (test.status) {
             case 'error':
                 errors++
@@ -36,12 +37,20 @@ export function generateXunit(tr: TestReport) {
         }
     }
 
-    r += `<testsuites tests="${tests}" skipped="${skipped}" errors="${errors}" failures="${failures}" name="${tr.name}" time="${durationSec}">`
+    r += `<testsuites tests="${tests}" skipped="${skipped}" errors="${errors}" failures="${failures}" name="${
+        tr.name
+    }" time="${(durationMs / 1000).toFixed(3)}">`
     r += `<testsuite tests="${tests}" skipped="${skipped}" errors="${errors}" failures="${failures}" name="${
         tr.name
-    }" time="${durationSec}" timestamp="${tr.startTime.toISOString()}">`
+    }" time="${(durationMs / 1000).toFixed(
+        3
+    )}" timestamp="${tr.startTime.toISOString()}">`
     for (let test of tr.entries) {
-        r += `<testcase name="${test.name}" classname="${tr.name}" assertions="${test.assertions}" status="${test.status}" time="${test.durationSec}">`
+        r += `<testcase name="${test.name}" classname="${
+            tr.name
+        }" assertions="${test.assertions}" status="${test.status}" time="${(
+            test.durationMs / 1000
+        ).toFixed(3)}">`
         if (test.status === 'failed') {
             r += `<failure message="not used" type="notUsed"><![CDATA[${test.message}]]></failure>`
         } else if (test.status === 'error') {

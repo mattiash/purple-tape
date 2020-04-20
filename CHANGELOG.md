@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+-   Summarize time-field correctly
+
 ## [3.5.1] 2020-04-16
 
 -   Save Date object in case sinon overrides it later
