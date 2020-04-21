@@ -12,6 +12,13 @@ export type TestReport = {
     entries: Array<TestEntryResult>
 }
 
+function attr(v: string) {
+    return v
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/</, '&lt;')
+}
+
 export function generateXunit(tr: TestReport) {
     let r = ''
     r += '<?xml version="1.0" encoding="UTF-8"?>'
@@ -37,18 +44,18 @@ export function generateXunit(tr: TestReport) {
         }
     }
 
-    r += `<testsuites tests="${tests}" skipped="${skipped}" errors="${errors}" failures="${failures}" name="${
+    r += `<testsuites tests="${tests}" skipped="${skipped}" errors="${errors}" failures="${failures}" name="${attr(
         tr.name
-    }" time="${(durationMs / 1000).toFixed(3)}">`
-    r += `<testsuite tests="${tests}" skipped="${skipped}" errors="${errors}" failures="${failures}" name="${
+    )}" time="${(durationMs / 1000).toFixed(3)}">`
+    r += `<testsuite tests="${tests}" skipped="${skipped}" errors="${errors}" failures="${failures}" name="${attr(
         tr.name
-    }" time="${(durationMs / 1000).toFixed(
+    )}" time="${(durationMs / 1000).toFixed(
         3
     )}" timestamp="${tr.startTime.toISOString()}">`
     for (let test of tr.entries) {
-        r += `<testcase name="${test.name}" classname="${
+        r += `<testcase name="${attr(test.name)}" classname="${attr(
             tr.name
-        }" assertions="${test.assertions}" status="${test.status}" time="${(
+        )}" assertions="${test.assertions}" status="${test.status}" time="${(
             test.durationMs / 1000
         ).toFixed(3)}">`
         if (test.status === 'failed') {

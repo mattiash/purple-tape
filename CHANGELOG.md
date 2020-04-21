@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+-   Escape attribute values
+
 ## [3.5.2] 2020-04-20
 
 -   Summarize time-field correctly
