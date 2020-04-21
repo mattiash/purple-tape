@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [3.5.3] 2020-04-21
+
 -   Escape attribute values
 
 ## [3.5.2] 2020-04-20
