@@ -1,3 +1,5 @@
+import { PurpleTapeTest } from './purple-tape-test'
+
 export type TestEntryResult = {
     name: string
     durationMs: number
@@ -9,7 +11,7 @@ export type TestEntryResult = {
 export type TestReport = {
     name: string
     startTime: Date
-    entries: Array<TestEntryResult | undefined>
+    entries: Array<PurpleTapeTest | undefined>
 }
 
 function attr(v: string) {
@@ -28,21 +30,23 @@ export function generateXunit(tr: TestReport) {
     let failures = 0
     let durationMs = 0
 
-    for (let test of tr.entries) {
-        if (test) {
-            tests++
-            durationMs += test.durationMs
-            switch (test.status) {
-                case 'error':
-                    errors++
-                    break
-                case 'skipped':
-                    skipped++
-                    break
-                case 'failed':
-                    failures++
-                    break
-            }
+    const testEntries = tr.entries
+        .filter((t) => !!t)
+        .map((t) => (t as PurpleTapeTest).testResult())
+
+    for (let test of testEntries) {
+        tests++
+        durationMs += test.durationMs
+        switch (test.status) {
+            case 'error':
+                errors++
+                break
+            case 'skipped':
+                skipped++
+                break
+            case 'failed':
+                failures++
+                break
         }
     }
 
@@ -54,20 +58,18 @@ export function generateXunit(tr: TestReport) {
     )}" time="${(durationMs / 1000).toFixed(
         3
     )}" timestamp="${tr.startTime.toISOString()}">`
-    for (let test of tr.entries) {
-        if (test) {
-            r += `<testcase name="${attr(test.name)}" classname="${attr(
-                tr.name
-            )}" assertions="${test.assertions}" status="${
-                test.status
-            }" time="${(test.durationMs / 1000).toFixed(3)}">`
-            if (test.status === 'failed') {
-                r += `<failure message="not used" type="notUsed"><![CDATA[${test.message}]]></failure>`
-            } else if (test.status === 'error') {
-                r += `<error message="not used" type="notUsed"><![CDATA[${test.message}]]></error>`
-            }
-            r += `</testcase>`
+    for (let test of testEntries) {
+        r += `<testcase name="${attr(test.name)}" classname="${attr(
+            tr.name
+        )}" assertions="${test.assertions}" status="${test.status}" time="${(
+            test.durationMs / 1000
+        ).toFixed(3)}">`
+        if (test.status === 'failed') {
+            r += `<failure message="not used" type="notUsed"><![CDATA[${test.message}]]></failure>`
+        } else if (test.status === 'error') {
+            r += `<error message="not used" type="notUsed"><![CDATA[${test.message}]]></error>`
         }
+        r += `</testcase>`
     }
     r += '</testsuite>'
     r += '</testsuites>'

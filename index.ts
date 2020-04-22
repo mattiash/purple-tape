@@ -101,7 +101,7 @@ async function runTest(title: string, fn: TestFunction) {
         }
         t.endTest()
 
-        return t.testResult()
+        return t
     }
 }
 
@@ -123,7 +123,7 @@ async function run() {
     if (beforeAll) {
         const testResult = await runTest('beforeAll', beforeAll)
         tr.entries.push(testResult)
-        if (testResult && testResult.status !== 'success') {
+        if (testResult && !testResult.succeeded()) {
             bail('beforeAll failed')
         }
     }
@@ -137,7 +137,7 @@ async function run() {
                     beforeEach
                 )
                 tr.entries.push(testResult)
-                beforeEachSucceded = testResult?.status === 'success'
+                beforeEachSucceded = !!testResult && testResult.succeeded()
             }
 
             if (beforeEachSucceded) {

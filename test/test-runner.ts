@@ -157,7 +157,7 @@ test('test-complete', async (t) => {
     t.equal(testsuites.$.skipped, '0', 'TODO: should be one skipped!')
 })
 
-test.skip('continue-after-return', async (t) => {
+test('continue-after-return', async (t) => {
     const res = await runTest('./continue-after-return.js')
     const testsuites = res.xml.testsuites
 

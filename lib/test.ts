@@ -67,7 +67,10 @@ export class Test {
         if (this.ended) {
             this.bailWithStack(new Error('test has already ended'))
         }
+        this._errorOut(message, extra)
+    }
 
+    private _errorOut(message: string, extra: any) {
         this.assertions++
         erroredChecks++
 
@@ -431,11 +434,9 @@ export class Test {
     }
 
     private bailWithStack(err: Error) {
-        this._fail(
+        this._errorOut(
             `Forbidden call to test-method after test '${this.title}' ended`,
-            {
-                stack: err.stack,
-            }
+            err
         )
     }
 }
