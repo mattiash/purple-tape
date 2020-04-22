@@ -8,12 +8,11 @@ import {
     erroredChecks,
 } from './lib/test'
 export { Test }
-import { TestReport, TestEntryResult, generateXunit } from './lib/xunit'
+import { TestReport, generateXunit } from './lib/xunit'
 import { basename } from 'path'
 import { writeFileSync } from 'fs'
+import { PurpleTapeTest } from './lib/purple-tape-test'
 
-// Save original Date in case sinon overrides it
-const originalNowFn = Date.now
 const OriginalDate = Date
 
 type TestFunction = (t: Test) => void | Promise<void>
@@ -81,39 +80,6 @@ test.only = (title: string, fn: TestFunction) => {
 
 test.skip = (title: string, _fn: TestFunction) => {
     tests.push([`SKIP ${title}`, undefined])
-}
-
-/* The name of this class shows up in all stack-traces */
-class PurpleTapeTest extends Test {
-    private readonly startTime = originalNowFn()
-
-    succeeded() {
-        return this.success
-    }
-
-    endTest() {
-        this.ended = true
-    }
-
-    testResult(): TestEntryResult {
-        if (this.firstNonSuccessStatus) {
-            return {
-                name: this.title,
-                assertions: this.assertions,
-                status: this.firstNonSuccessStatus,
-                durationMs: originalNowFn() - this.startTime,
-                message: this.firstNonSuccessMessage,
-            }
-        } else {
-            return {
-                name: this.title,
-                assertions: this.assertions,
-                status: 'success',
-                durationMs: originalNowFn() - this.startTime,
-                message: this.firstNonSuccessMessage,
-            }
-        }
-    }
 }
 
 async function runTest(title: string, fn: TestFunction) {
