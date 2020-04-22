@@ -1,3 +1,4 @@
+import 'source-map-support/register'
 import { test, Test } from '../index'
 import * as assert from 'assert'
 

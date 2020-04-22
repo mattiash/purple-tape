@@ -104,6 +104,10 @@ export class Test {
         if (this.ended) {
             this.bailWithStack(new Error('test has already ended'))
         }
+        this._fail(message, extra)
+    }
+
+    private _fail(message = 'fail', extra: any = undefined) {
         this.assertions++
         failedChecks++
         if (this.success) {
@@ -135,7 +139,9 @@ export class Test {
                 message + (extra ? `\n${inlineYamlBlock(extra)}` : '')
             this.firstNonSuccessStatus = 'error'
         }
-        console.log(`not ok ${passedChecks + failedChecks} ${message}`)
+        console.log(
+            `not ok ${passedChecks + failedChecks + erroredChecks} ${message}`
+        )
         if (extra) {
             console.log(inlineYamlBlock(extra))
         }
@@ -478,17 +484,18 @@ export class Test {
     }
 
     /**
-     * Print a Bail out! message and process.exit(1) immediately
+     * Print a Bail out! message, skip all further tests and process.exit(1)
      */
-    bail(message = '') {
+    bail(message = 'bail') {
+        this._fail(message)
         bail(message)
+        throw new BailError()
     }
 
     private bailWithStack(err: Error) {
-        console.log(`\nForbidden call to test-method after test ended`)
-        console.log(`Test: "${this.title}"`)
-        console.log(`Stack: ${err.stack}`)
-        this.bail('Test has a bug...')
+        this._fail(`Forbidden call to test-method after test '${this.title}' ended`, {
+            stack: err.stack
+        })
     }
 }
 
@@ -496,9 +503,12 @@ let passedChecks = 0
 let failedChecks = 0
 let erroredChecks = 0
 
+class BailError extends Error {}
+let bailOut = false
+
 function bail(message: string) {
     console.log(`\nBail out! ${message}`)
-    process.exit(1)
+    bailOut = true
 }
 
 /* The name of this class shows up in all stack-traces */
@@ -535,19 +545,26 @@ class PurpleTapeTest extends Test {
 }
 
 async function runTest(title: string, fn: TestFunction) {
-    const t = new PurpleTapeTest(title)
-    console.log(`\n# ${title}`)
+    if (bailOut) {
+        return undefined
+    } else {
+        const t = new PurpleTapeTest(title)
+        console.log(`\n# ${title}`)
 
-    try {
-        await fn(t)
-    } catch (e) {
-        t.errorOut('shall not throw exception', {
-            stack: e.stack,
-        })
+        try {
+            await fn(t)
+        } catch (e) {
+            if (e instanceof BailError) {
+            } else {
+                t.errorOut('shall not throw exception', {
+                    stack: e?.stack || '',
+                })
+            }
+        }
+        t.endTest()
+
+        return t.testResult()
     }
-    t.endTest()
-
-    return t.testResult()
 }
 
 async function run() {
@@ -559,6 +576,8 @@ async function run() {
         entries: [],
     }
 
+    process.on('exit', () => summarize(tr))
+
     if (onlyTest) {
         tests = [onlyTest]
     }
@@ -566,7 +585,7 @@ async function run() {
     if (beforeAll) {
         const testResult = await runTest('beforeAll', beforeAll)
         tr.entries.push(testResult)
-        if (testResult.status !== 'success') {
+        if (testResult && testResult.status !== 'success') {
             bail('beforeAll failed')
         }
     }
@@ -580,7 +599,7 @@ async function run() {
                     beforeEach
                 )
                 tr.entries.push(testResult)
-                beforeEachSucceded = testResult.status === 'success'
+                beforeEachSucceded = testResult?.status === 'success'
             }
 
             if (beforeEachSucceded) {
@@ -605,7 +624,10 @@ async function run() {
         tr.entries.push(testResult)
     }
 
-    summarize(tr)
+    if (bailOut) {
+        // Avoid something hanging the process after a bailout
+        process.exit(1)
+    }
 }
 
 function summarize(tr: TestReport) {

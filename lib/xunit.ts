@@ -9,7 +9,7 @@ export type TestEntryResult = {
 export type TestReport = {
     name: string
     startTime: Date
-    entries: Array<TestEntryResult>
+    entries: Array<TestEntryResult | undefined>
 }
 
 function attr(v: string) {
@@ -29,18 +29,20 @@ export function generateXunit(tr: TestReport) {
     let durationMs = 0
 
     for (let test of tr.entries) {
-        tests++
-        durationMs += test.durationMs
-        switch (test.status) {
-            case 'error':
-                errors++
-                break
-            case 'skipped':
-                skipped++
-                break
-            case 'failed':
-                failures++
-                break
+        if (test) {
+            tests++
+            durationMs += test.durationMs
+            switch (test.status) {
+                case 'error':
+                    errors++
+                    break
+                case 'skipped':
+                    skipped++
+                    break
+                case 'failed':
+                    failures++
+                    break
+            }
         }
     }
 
@@ -53,17 +55,19 @@ export function generateXunit(tr: TestReport) {
         3
     )}" timestamp="${tr.startTime.toISOString()}">`
     for (let test of tr.entries) {
-        r += `<testcase name="${attr(test.name)}" classname="${attr(
-            tr.name
-        )}" assertions="${test.assertions}" status="${test.status}" time="${(
-            test.durationMs / 1000
-        ).toFixed(3)}">`
-        if (test.status === 'failed') {
-            r += `<failure message="not used" type="notUsed"><![CDATA[${test.message}]]></failure>`
-        } else if (test.status === 'error') {
-            r += `<error message="not used" type="notUsed"><![CDATA[${test.message}]]></error>`
+        if (test) {
+            r += `<testcase name="${attr(test.name)}" classname="${attr(
+                tr.name
+            )}" assertions="${test.assertions}" status="${
+                test.status
+            }" time="${(test.durationMs / 1000).toFixed(3)}">`
+            if (test.status === 'failed') {
+                r += `<failure message="not used" type="notUsed"><![CDATA[${test.message}]]></failure>`
+            } else if (test.status === 'error') {
+                r += `<error message="not used" type="notUsed"><![CDATA[${test.message}]]></error>`
+            }
+            r += `</testcase>`
         }
-        r += `</testcase>`
     }
     r += '</testsuite>'
     r += '</testsuites>'
