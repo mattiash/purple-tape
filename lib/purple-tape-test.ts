@@ -6,6 +6,7 @@ const originalNowFn = Date.now
 
 /* The name of this class shows up in all stack-traces */
 export class PurpleTapeTest extends Test {
+    private skipped = false
     private readonly startTime = originalNowFn()
 
     succeeded() {
@@ -14,6 +15,10 @@ export class PurpleTapeTest extends Test {
 
     endTest() {
         this.ended = true
+    }
+
+    skip() {
+        this.skipped = true
     }
 
     testResult(): TestEntryResult {
@@ -25,13 +30,21 @@ export class PurpleTapeTest extends Test {
                 durationMs: originalNowFn() - this.startTime,
                 message: this.firstNonSuccessMessage,
             }
+        } else if (this.skipped) {
+            return {
+                name: this.title,
+                assertions: 0,
+                status: 'skipped',
+                durationMs: 0,
+                message: '',
+            }
         } else {
             return {
                 name: this.title,
                 assertions: this.assertions,
                 status: 'success',
                 durationMs: originalNowFn() - this.startTime,
-                message: this.firstNonSuccessMessage,
+                message: '',
             }
         }
     }

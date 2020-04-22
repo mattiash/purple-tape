@@ -58,6 +58,17 @@ test('error', async (t) => {
     t.equal(testsuites.$.skipped, '0')
 })
 
+test('skip-test', async (t) => {
+    const res = await runTest('./skip-test.js')
+    const testsuites = res.xml.testsuites
+
+    t.equal(res.exitCode, 0, 'test shall pass')
+    t.equal(testsuites.$.tests, '2')
+    t.equal(testsuites.$.errors, '0')
+    t.equal(testsuites.$.failures, '0')
+    t.equal(testsuites.$.skipped, '1')
+})
+
 test('failure-in-beforeAll', async (t) => {
     const res = await runTest('./failure-in-beforeAll.js')
     const testsuites = res.xml.testsuites
@@ -154,7 +165,7 @@ test('test-complete', async (t) => {
     t.equal(testsuites.$.tests, '9')
     t.equal(testsuites.$.errors, '0')
     t.equal(testsuites.$.failures, '1')
-    t.equal(testsuites.$.skipped, '0', 'TODO: should be one skipped!')
+    t.equal(testsuites.$.skipped, '1')
 })
 
 test('continue-after-return', async (t) => {
@@ -162,7 +173,6 @@ test('continue-after-return', async (t) => {
     const testsuites = res.xml.testsuites
 
     t.equal(res.exitCode, 1, 'test shall not pass')
-    console.log(testsuites.testsuite[0].testcase)
     t.equal(testsuites.$.tests, '2')
     t.equal(testsuites.$.errors, '1')
     t.equal(testsuites.$.failures, '0')

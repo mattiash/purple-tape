@@ -39,7 +39,7 @@ export function test(
 
     if (fn) {
         if (opts.skip) {
-            tests.push([`SKIP ${title}`, () => {}])
+            tests.push([`SKIP ${title}`, undefined])
         } else {
             tests.push([title, fn])
         }
@@ -121,9 +121,9 @@ async function run() {
     }
 
     if (beforeAll) {
-        const testResult = await runTest('beforeAll', beforeAll)
-        tr.entries.push(testResult)
-        if (testResult && !testResult.succeeded()) {
+        const pt = await runTest('beforeAll', beforeAll)
+        tr.entries.push(pt)
+        if (pt && !pt.succeeded()) {
             bail('beforeAll failed')
         }
     }
@@ -132,29 +132,24 @@ async function run() {
         if (fn) {
             let beforeEachSucceded = true
             if (beforeEach) {
-                const testResult = await runTest(
-                    `beforeEach ${title}`,
-                    beforeEach
-                )
-                tr.entries.push(testResult)
-                beforeEachSucceded = !!testResult && testResult.succeeded()
+                const pt = await runTest(`beforeEach ${title}`, beforeEach)
+                tr.entries.push(pt)
+                beforeEachSucceded = !!pt && pt.succeeded()
             }
 
             if (beforeEachSucceded) {
-                const testResult = await runTest(title, fn)
-                tr.entries.push(testResult)
+                const pt = await runTest(title, fn)
+                tr.entries.push(pt)
             }
 
             if (afterEach) {
-                const testResult = await runTest(
-                    `afterEach ${title}`,
-                    afterEach
-                )
-                tr.entries.push(testResult)
+                const pt = await runTest(`afterEach ${title}`, afterEach)
+                tr.entries.push(pt)
             }
         } else {
-            const testResult = await runTest(title, () => {})
-            tr.entries.push(testResult)
+            const pt = new PurpleTapeTest(title)
+            pt.skip()
+            tr.entries.push(pt)
         }
     }
     if (afterAll) {
