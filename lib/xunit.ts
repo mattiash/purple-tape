@@ -68,6 +68,8 @@ export function generateXunit(tr: TestReport) {
             r += `<failure message="not used" type="notUsed"><![CDATA[${test.message}]]></failure>`
         } else if (test.status === 'error') {
             r += `<error message="not used" type="notUsed"><![CDATA[${test.message}]]></error>`
+        } else if (test.status === 'skipped') {
+            r += '<skipped/>'
         }
         r += `</testcase>`
     }

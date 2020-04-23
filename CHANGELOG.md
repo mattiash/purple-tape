@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+-   Report skipped tests correctly in junit xml
+
 ## [3.5.4] 2020-04-22
 
 -   Report error if test continues after returning
