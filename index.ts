@@ -39,7 +39,7 @@ export function test(
 
     if (fn) {
         if (opts.skip) {
-            tests.push([`SKIP ${title}`, undefined])
+            tests.push([title, undefined])
         } else {
             tests.push([title, fn])
         }
@@ -52,7 +52,7 @@ let beforeEach: TestFunction | undefined
 let afterEach: TestFunction | undefined
 let beforeAll: TestFunction | undefined
 let afterAll: TestFunction | undefined
-let onlyTest: TestEntry | undefined
+let onlyTest = -1 // Index into tests
 
 test.beforeEach = (fn: TestFunction) => {
     beforeEach = fn
@@ -71,15 +71,16 @@ test.afterAll = (fn: TestFunction) => {
 }
 
 test.only = (title: string, fn: TestFunction) => {
-    if (onlyTest) {
+    if (onlyTest > -1) {
         throw new Error('Can only have one test.only')
     } else {
-        onlyTest = [title, fn]
+        test(title, fn)
+        onlyTest = tests.length - 1
     }
 }
 
-test.skip = (title: string, _fn: TestFunction) => {
-    tests.push([`SKIP ${title}`, undefined])
+test.skip = (title: string, fn: TestFunction) => {
+    test(title, { skip: true }, fn)
 }
 
 async function runTest(title: string, fn: TestFunction) {
@@ -116,8 +117,12 @@ async function run() {
 
     process.on('exit', () => summarize(tr))
 
-    if (onlyTest) {
-        tests = [onlyTest]
+    if (onlyTest > -1) {
+        tests.forEach((test, i) => {
+            if (i !== onlyTest) {
+                test[1] = undefined
+            }
+        })
     }
 
     if (beforeAll) {
@@ -149,6 +154,8 @@ async function run() {
         } else {
             const pt = new PurpleTapeTest(title)
             pt.skip()
+            console.log(`\n# SKIP ${title}`)
+
             tr.entries.push(pt)
         }
     }
