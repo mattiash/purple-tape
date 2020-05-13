@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [3.5.6] 2020-05-13
+
 -   Fix regression where time was reported wrong in junit xml
 
 ## [3.5.5] 2020-04-23
