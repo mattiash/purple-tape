@@ -9,9 +9,8 @@
     ],
     "scripts": {
         "lint": "prettier -l *.ts lib/*.ts test/*.ts",
-        "prepare": "tsc",
-        "prepublishOnly": "npm run lint && npm run test",
-        "test": "npm run prepare && node build/test/test-verification-functions.js && node build/test/test-runner.js"
+        "build": "tsc",
+        "test": "node build/test/test-verification-functions.js && node build/test/test-runner.js"
     },
     "author": "Mattias Holmlund",
     "license": "MIT",
