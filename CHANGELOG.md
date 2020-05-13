@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [3.5.7] 2020-05-13
+
+-   Build release with github action. No code changes.
+
 ## [3.5.6] 2020-05-13
 
 -   Fix regression where time was reported wrong in junit xml
