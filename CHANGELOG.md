@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+-   Fix regression where time was reported wrong in junit xml
+
 ## [3.5.5] 2020-04-23
 
 -   Report skipped tests correctly in junit xml

@@ -154,6 +154,7 @@ async function run() {
         } else {
             const pt = new PurpleTapeTest(title)
             pt.skip()
+            pt.endTest()
             console.log(`\n# SKIP ${title}`)
 
             tr.entries.push(pt)

@@ -8,6 +8,7 @@ const originalNowFn = Date.now
 export class PurpleTapeTest extends Test {
     private skipped = false
     private readonly startTime = originalNowFn()
+    private endTime: number | undefined
 
     succeeded() {
         return this.success
@@ -15,6 +16,7 @@ export class PurpleTapeTest extends Test {
 
     endTest() {
         this.ended = true
+        this.endTime = originalNowFn()
     }
 
     skip() {
@@ -22,30 +24,34 @@ export class PurpleTapeTest extends Test {
     }
 
     testResult(): TestEntryResult {
-        if (this.firstNonSuccessStatus) {
-            return {
-                name: this.title,
-                assertions: this.assertions,
-                status: this.firstNonSuccessStatus,
-                durationMs: originalNowFn() - this.startTime,
-                message: this.firstNonSuccessMessage,
-            }
-        } else if (this.skipped) {
-            return {
-                name: this.title,
-                assertions: 0,
-                status: 'skipped',
-                durationMs: 0,
-                message: '',
+        if (this.endTime) {
+            if (this.firstNonSuccessStatus) {
+                return {
+                    name: this.title,
+                    assertions: this.assertions,
+                    status: this.firstNonSuccessStatus,
+                    durationMs: this.endTime - this.startTime,
+                    message: this.firstNonSuccessMessage,
+                }
+            } else if (this.skipped) {
+                return {
+                    name: this.title,
+                    assertions: 0,
+                    status: 'skipped',
+                    durationMs: 0,
+                    message: '',
+                }
+            } else {
+                return {
+                    name: this.title,
+                    assertions: this.assertions,
+                    status: 'success',
+                    durationMs: this.endTime - this.startTime,
+                    message: '',
+                }
             }
         } else {
-            return {
-                name: this.title,
-                assertions: this.assertions,
-                status: 'success',
-                durationMs: originalNowFn() - this.startTime,
-                message: '',
-            }
+            throw new Error('Cannot get testResult before test has ended')
         }
     }
 }
