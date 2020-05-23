@@ -4,7 +4,7 @@ Run tests with an api similar to [tape](https://www.npmjs.com/package/tape) but 
 
 ![Build master](https://github.com/mattiash/purple-tape/workflows/Build%20master/badge.svg)
 ![Publish to nom](https://github.com/mattiash/purple-tape/workflows/Publish%20to%20npm/badge.svg)
-![npm version](https://badge.fury.io/js/purple-tape.svg)]
+![npm version](https://badge.fury.io/js/purple-tape.svg)
 
 ### Usage
 
