@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [3.5.8] 2020-05-23
+
 -   Report an error if tests call process.exit()
 
 ## [3.5.7] 2020-05-13
