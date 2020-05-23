@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+-   Report an error if tests call process.exit()
+
 ## [3.5.7] 2020-05-13
 
 -   Build release with github action. No code changes.

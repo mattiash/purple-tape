@@ -205,3 +205,58 @@ test('continue-after-return', async (t) => {
     t.equal(testsuites.$.failures, '0')
     t.equal(testsuites.$.skipped, '0')
 })
+
+test('exit', async (t) => {
+    const res = await runTest('./exit.js')
+    const testsuites = res.xml.testsuites
+
+    t.equal(res.exitCode, 1, 'test shall not pass')
+    t.equal(testsuites.$.tests, '1')
+    t.equal(testsuites.$.errors, '1')
+    t.equal(testsuites.$.failures, '0')
+    t.equal(testsuites.$.skipped, '0')
+})
+
+test('exit-in-beforeEach', async (t) => {
+    const res = await runTest('./exit-in-beforeEach.js')
+    const testsuites = res.xml.testsuites
+
+    t.equal(res.exitCode, 1, 'test shall not pass')
+    t.equal(testsuites.$.tests, '1')
+    t.equal(testsuites.$.errors, '1')
+    t.equal(testsuites.$.failures, '0')
+    t.equal(testsuites.$.skipped, '0')
+})
+
+test('exit-in-afterEach', async (t) => {
+    const res = await runTest('./exit-in-afterEach.js')
+    const testsuites = res.xml.testsuites
+
+    t.equal(res.exitCode, 1, 'test shall not pass')
+    t.equal(testsuites.$.tests, '2')
+    t.equal(testsuites.$.errors, '1')
+    t.equal(testsuites.$.failures, '0')
+    t.equal(testsuites.$.skipped, '0')
+})
+
+test('exit-in-beforeAll', async (t) => {
+    const res = await runTest('./exit-in-beforeAll.js')
+    const testsuites = res.xml.testsuites
+
+    t.equal(res.exitCode, 1, 'test shall not pass')
+    t.equal(testsuites.$.tests, '1')
+    t.equal(testsuites.$.errors, '1')
+    t.equal(testsuites.$.failures, '0')
+    t.equal(testsuites.$.skipped, '0')
+})
+
+test('exit-in-afterAll', async (t) => {
+    const res = await runTest('./exit-in-afterAll.js')
+    const testsuites = res.xml.testsuites
+
+    t.equal(res.exitCode, 1, 'test shall not pass')
+    t.equal(testsuites.$.tests, '3')
+    t.equal(testsuites.$.errors, '1')
+    t.equal(testsuites.$.failures, '0')
+    t.equal(testsuites.$.skipped, '0')
+})

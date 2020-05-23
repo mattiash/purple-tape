@@ -20,6 +20,7 @@ type TestFunction = (t: Test) => void | Promise<void>
 type TestEntry = [string, TestFunction | undefined]
 
 let tests = new Array<TestEntry>()
+let currentTest = new PurpleTapeTest('dummy')
 
 export function test(title: string, fn: TestFunction): void
 export function test(
@@ -87,22 +88,22 @@ async function runTest(title: string, fn: TestFunction) {
     if (bailOut) {
         return undefined
     } else {
-        const t = new PurpleTapeTest(title)
+        currentTest = new PurpleTapeTest(title)
         console.log(`\n# ${title}`)
 
         try {
-            await fn(t)
+            await fn(currentTest)
         } catch (e) {
             if (e instanceof BailError) {
             } else {
-                t.errorOut('shall not throw exception', {
+                currentTest.errorOut('shall not throw exception', {
                     stack: e?.stack || '',
                 })
             }
         }
-        t.endTest()
+        currentTest.endTest()
 
-        return t
+        return currentTest
     }
 }
 
@@ -172,6 +173,11 @@ async function run() {
 }
 
 function summarize(tr: TestReport) {
+    if (!currentTest.ended) {
+        currentTest['_errorOut']('process.exit called', {})
+        currentTest.endTest()
+        tr.entries.push(currentTest)
+    }
     if (process.env.PT_XUNIT_FILE) {
         writeFileSync(process.env.PT_XUNIT_FILE, generateXunit(tr))
     }

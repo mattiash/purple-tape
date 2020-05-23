@@ -16,7 +16,7 @@ export function bail(message: string) {
 
 export class Test {
     protected success = true
-    protected ended = false
+    ended = false
     protected assertions = 0
     protected firstNonSuccessMessage: string | undefined
     protected firstNonSuccessStatus: 'error' | 'failed' | undefined
