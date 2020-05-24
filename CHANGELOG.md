@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [3.5.9] 2020-05-24
+
 -   Convert undefined and null to yaml correctly
 
 ## [3.5.8] 2020-05-23
