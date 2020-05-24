@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+-   Convert undefined and null to yaml correctly
+
 ## [3.5.8] 2020-05-23
 
 -   Report an error if tests call process.exit()

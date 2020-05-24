@@ -21,6 +21,7 @@ test('run test 1', async (t) => {
     t.ok(!(await Promise.resolve(true)), 'shall await results')
     t.equal('a', 'a', 'shall be a')
     t.equal('a', 'b')
+    t.equal(undefined, 'a')
     t.deepEqual({ a: 'a' }, { a: 'a' }, 'deepEqual shall succeed')
     t.deepEqual({ a: 'a' }, { a: 'b' }, 'deepEqual shall fail')
 })

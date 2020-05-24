@@ -1,6 +1,6 @@
 export function inlineYamlBlock(obj: any) {
     let result = Object.keys(obj)
-        .map((key) => `${key}: ${jsonValue(obj[key].toString())}`)
+        .map((key) => `${key}: ${jsonValue(stringify(obj[key]))}`)
         .join('\n')
     result = indent(result)
     result = `---\n${result}\n...`
@@ -21,4 +21,19 @@ function indent(lines: string) {
         .split('\n')
         .map((s) => '  ' + s)
         .join('\n')
+}
+
+function stringify(value: any) {
+    try {
+        const str = value.toString()
+        return str
+    } catch {
+        // In javascript 1.8.5, null and undefined will have a toString()
+        // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/toString
+        return value === undefined
+            ? '[Object Undefined]'
+            : value === null
+            ? '[Object null]'
+            : '[Unknown value]'
+    }
 }

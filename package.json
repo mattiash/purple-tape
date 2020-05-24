@@ -10,7 +10,7 @@
     "scripts": {
         "lint": "prettier -l *.ts lib/*.ts test/*.ts",
         "build": "tsc",
-        "test": "node build/test/test-verification-functions.js && node build/test/test-runner.js"
+        "test": "node build/test/test-verification-functions.js && node build/test/test-runner.js && node build/test/test-yaml.js"
     },
     "author": "Mattias Holmlund",
     "license": "MIT",
