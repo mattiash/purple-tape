@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+-   Generate preliminary xml as fallback if test exits improperly
+
 ## [3.5.9] 2020-05-24
 
 -   Convert undefined and null to yaml correctly

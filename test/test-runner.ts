@@ -260,3 +260,14 @@ test('exit-in-afterAll', async (t) => {
     t.equal(testsuites.$.failures, '0')
     t.equal(testsuites.$.skipped, '0')
 })
+
+test('premature-exit', async (t) => {
+    const res = await runTest('./premature-exit.js')
+    const testsuites = res.xml.testsuites
+
+    t.equal(res.exitCode, 1, 'test shall not pass')
+    t.equal(testsuites.$.tests, '1')
+    t.equal(testsuites.$.errors, '1')
+    t.equal(testsuites.$.failures, '0')
+    t.equal(testsuites.$.skipped, '0')
+})
