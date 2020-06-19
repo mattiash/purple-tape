@@ -2,6 +2,8 @@ import { inlineYamlBlock } from './yaml'
 import deepEqual from 'deep-equal'
 import objectInspect from 'object-inspect'
 
+type WaitFn = (t: Test) => Promise<void> | void
+
 export let passedChecks = 0
 export let failedChecks = 0
 export let erroredChecks = 0
@@ -21,6 +23,13 @@ export class Test {
     protected firstNonSuccessMessage: string | undefined
     protected firstNonSuccessStatus: 'error' | 'failed' | undefined
 
+    private isWaiting = false
+    private waitQueue = new Array<{
+        result: 'pass' | 'error' | 'failed'
+        message: string
+        extra: any
+    }>()
+
     constructor(readonly title: string) {}
 
     private addAssertion(
@@ -28,26 +37,30 @@ export class Test {
         message: string,
         extra: any
     ) {
-        this.assertions++
-        if (result === 'pass') {
-            passedChecks++
-            console.log(`ok ${passedChecks + failedChecks} ${message}`)
+        if (this.isWaiting) {
+            this.waitQueue.push({ result, message, extra })
         } else {
             this.assertions++
-            if (result === 'failed') {
-                failedChecks++
+            if (result === 'pass') {
+                passedChecks++
+                console.log(`ok ${passedChecks + failedChecks} ${message}`)
             } else {
-                erroredChecks++
-            }
-            if (this.success) {
-                this.success = false
-                this.firstNonSuccessMessage =
-                    message + (extra ? `\n${inlineYamlBlock(extra)}` : '')
-                this.firstNonSuccessStatus = result
-            }
-            console.log(`not ok ${passedChecks + failedChecks} ${message}`)
-            if (extra) {
-                console.log(inlineYamlBlock(extra))
+                this.assertions++
+                if (result === 'failed') {
+                    failedChecks++
+                } else {
+                    erroredChecks++
+                }
+                if (this.success) {
+                    this.success = false
+                    this.firstNonSuccessMessage =
+                        message + (extra ? `\n${inlineYamlBlock(extra)}` : '')
+                    this.firstNonSuccessStatus = result
+                }
+                console.log(`not ok ${passedChecks + failedChecks} ${message}`)
+                if (extra) {
+                    console.log(inlineYamlBlock(extra))
+                }
             }
         }
     }
@@ -432,4 +445,74 @@ export class Test {
         bail(message)
         throw new BailError()
     }
+
+    private startWait() {
+        if (this.isWaiting) {
+            throw new Error('Cannot waitUntil in waitUntil')
+        } else {
+            this.isWaiting = true
+        }
+    }
+
+    private endWait() {
+        if (this.isWaiting) {
+            this.isWaiting = false
+            if (this.waitQueue.length === 0) {
+                this.fail('waitUntil did not run any checks')
+                return false
+            } else {
+                const success = this.waitSuccess()
+                for (const a of this.waitQueue) {
+                    this.addAssertion(a.result, a.message, a.extra)
+                }
+                this.waitQueue.length = 0
+                return success
+            }
+        } else {
+            throw new Error('Not in waiting state')
+        }
+    }
+
+    private waitSuccess() {
+        return (
+            this.waitQueue.length > 0 &&
+            this.waitQueue.every((e) => e.result === 'pass')
+        )
+    }
+
+    private resetWait() {
+        this.waitQueue.length = 0
+    }
+
+    /**
+     * Wait until all checks in fn succeeds or until
+     * timeout expires. Wait interval ms between each invocation
+     * of fn.
+     */
+    async waitUntil(fn: WaitFn, timeout: number, interval: number) {
+        this.startWait()
+        const start = Date.now()
+        try {
+            let done = false
+            while (!done) {
+                this.resetWait()
+                await fn(this)
+                if (this.waitSuccess()) {
+                    done = true
+                } else {
+                    done = Date.now() + interval > start + timeout
+                    if (!done) {
+                        await wait(interval)
+                    }
+                }
+            }
+        } catch (err) {
+        } finally {
+            this.endWait()
+        }
+    }
+}
+
+function wait(ms: number) {
+    return new Promise((resolve) => setTimeout(resolve, ms))
 }

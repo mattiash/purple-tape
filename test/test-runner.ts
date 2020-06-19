@@ -271,3 +271,17 @@ test('premature-exit', async (t) => {
     t.equal(testsuites.$.failures, '0')
     t.equal(testsuites.$.skipped, '0')
 })
+
+test('waitUntil', async (t) => {
+    const res = await runTest('./waitUntil.js')
+    const testsuites = res.xml.testsuites
+
+    t.equal(res.exitCode, 1, 'test shall not pass')
+    t.equal(testsuites.$.tests, '4')
+    t.equal(testsuites.$.errors, '0')
+    t.equal(testsuites.$.failures, '2')
+    t.equal(testsuites.$.skipped, '0')
+    t.equal(testsuites.testsuite[0].testcase[1].$.status, 'success')
+    t.equal(testsuites.testsuite[0].testcase[2].$.status, 'failed')
+    t.equal(testsuites.testsuite[0].testcase[3].$.status, 'failed')
+})

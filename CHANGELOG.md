@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+-   Add waitUntil method
+
 ## [3.5.10] 2020-06-18
 
 -   Generate preliminary xml as fallback if test exits improperly
