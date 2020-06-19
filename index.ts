@@ -185,7 +185,7 @@ async function run() {
 
 function summarize(tr: TestReport) {
     if (!currentTest.ended) {
-        currentTest['_errorOut']('process.exit called', {})
+        currentTest['addAssertion']('error', 'process.exit called', {})
         currentTest.endTest()
         tr.entries.push(currentTest)
     }

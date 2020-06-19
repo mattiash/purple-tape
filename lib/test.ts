@@ -23,69 +23,71 @@ export class Test {
 
     constructor(readonly title: string) {}
 
+    private addAssertion(
+        result: 'pass' | 'error' | 'failed',
+        message: string,
+        extra: any
+    ) {
+        this.assertions++
+        if (result === 'pass') {
+            passedChecks++
+            console.log(`ok ${passedChecks + failedChecks} ${message}`)
+        } else {
+            this.assertions++
+            if (result === 'failed') {
+                failedChecks++
+            } else {
+                erroredChecks++
+            }
+            if (this.success) {
+                this.success = false
+                this.firstNonSuccessMessage =
+                    message + (extra ? `\n${inlineYamlBlock(extra)}` : '')
+                this.firstNonSuccessStatus = result
+            }
+            console.log(`not ok ${passedChecks + failedChecks} ${message}`)
+            if (extra) {
+                console.log(inlineYamlBlock(extra))
+            }
+        }
+    }
+
+    private assertNotEnded() {
+        if (this.ended) {
+            this.addAssertion(
+                'error',
+                `Forbidden call to test-method after test ${this.title} ended`,
+                new Error('test has already ended')
+            )
+        }
+    }
+
     /**
      * Print a message that a check passed.
      */
     pass(message = 'pass') {
-        if (this.ended) {
-            this.bailWithStack(new Error('test has already ended'))
-        }
-        this.assertions++
-        passedChecks++
-        console.log(`ok ${passedChecks + failedChecks} ${message}`)
+        this.assertNotEnded()
+        this.addAssertion('pass', message, undefined)
     }
 
     /**
      * Print a message that a check has failed
      */
     fail(message = 'fail', extra: any = undefined) {
-        if (this.ended) {
-            this.bailWithStack(new Error('test has already ended'))
-        }
+        this.assertNotEnded()
         this._fail(message, extra)
     }
 
     private _fail(message = 'fail', extra: any = undefined) {
-        this.assertions++
-        failedChecks++
-        if (this.success) {
-            this.success = false
-            this.firstNonSuccessMessage =
-                message + (extra ? `\n${inlineYamlBlock(extra)}` : '')
-            this.firstNonSuccessStatus = 'failed'
-        }
-        console.log(`not ok ${passedChecks + failedChecks} ${message}`)
-        if (extra) {
-            console.log(inlineYamlBlock(extra))
-        }
+        this.addAssertion('failed', message, extra)
     }
 
     /**
      * Report that the test has thrown an error.
      */
     errorOut(message: string, extra: any = undefined) {
-        if (this.ended) {
-            this.bailWithStack(new Error('test has already ended'))
-        }
-        this._errorOut(message, extra)
-    }
-
-    private _errorOut(message: string, extra: any) {
-        this.assertions++
-        erroredChecks++
-
-        if (this.success) {
-            this.success = false
-            this.firstNonSuccessMessage =
-                message + (extra ? `\n${inlineYamlBlock(extra)}` : '')
-            this.firstNonSuccessStatus = 'error'
-        }
-        console.log(
-            `not ok ${passedChecks + failedChecks + erroredChecks} ${message}`
-        )
-        if (extra) {
-            console.log(inlineYamlBlock(extra))
-        }
+        this.assertNotEnded()
+        this.addAssertion('error', message, extra)
     }
 
     /**
@@ -411,9 +413,7 @@ export class Test {
      * Logs a comment
      */
     comment(message: string) {
-        if (this.ended) {
-            this.bailWithStack(new Error('test ended'))
-        }
+        this.assertNotEnded()
         console.log(`# ${message}`)
     }
 
@@ -431,12 +431,5 @@ export class Test {
         this._fail(message)
         bail(message)
         throw new BailError()
-    }
-
-    private bailWithStack(err: Error) {
-        this._errorOut(
-            `Forbidden call to test-method after test '${this.title}' ended`,
-            err
-        )
     }
 }
