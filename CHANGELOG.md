@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [3.6.0] 2020-06-18
+
 -   Add waitUntil method
 
 ## [3.5.10] 2020-06-18
