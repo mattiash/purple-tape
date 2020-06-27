@@ -487,8 +487,15 @@ export class Test {
      * Wait until all checks in fn succeeds or until
      * timeout expires. Wait interval ms between each invocation
      * of fn.
+     *
+     * If waitUntil times out without all checks succeeding,
+     * it will abort the entire test()-case by throwing an exception
+     * that is caught by purple-tape
+     *
+     * interval defaults to interval/30 but at least 100ms and at most 5s.
      */
-    async waitUntil(fn: WaitFn, timeout: number, interval: number) {
+    async waitUntil(fn: WaitFn, timeout: number, interval?: number) {
+        interval = interval ?? smartInterval(timeout)
         this.startWait()
         const start = Date.now()
         try {
@@ -516,6 +523,13 @@ export class Test {
 
 function wait(ms: number) {
     return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
+export function smartInterval(timeout: number) {
+    const MIN_INTERVAL = 100
+    const MAX_INTERVAL = 5_000
+    const interval = timeout / 30
+    return Math.min(MAX_INTERVAL, Math.max(MIN_INTERVAL, interval))
 }
 
 export class WaitUntilFailed extends Error {}

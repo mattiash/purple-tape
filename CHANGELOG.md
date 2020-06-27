@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+-   Use reasonable default for waitUntil interval.
+
 ## [3.6.1] 2020-06-27
 
 -   Abort test if waitUntil fails
