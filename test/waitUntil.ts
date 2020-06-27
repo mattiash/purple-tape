@@ -11,6 +11,8 @@ test('waitUntil synchronous', async (t) => {
         400,
         100
     )
+
+    t.true(true)
 })
 
 test('waitUntil asynchronous', async (t) => {
@@ -24,6 +26,8 @@ test('waitUntil asynchronous', async (t) => {
         500,
         100
     )
+
+    t.true(true)
 })
 
 test('waitUntil synchronous fail', async (t) => {
@@ -36,6 +40,8 @@ test('waitUntil synchronous fail', async (t) => {
         400,
         100
     )
+
+    t.true(true)
 })
 
 test('waitUntil asynchronous fail', async (t) => {
@@ -49,6 +55,8 @@ test('waitUntil asynchronous fail', async (t) => {
         500,
         100
     )
+
+    t.true(true)
 })
 
 function wait(ms: number) {

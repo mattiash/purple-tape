@@ -281,7 +281,20 @@ test('waitUntil', async (t) => {
     t.equal(testsuites.$.errors, '0')
     t.equal(testsuites.$.failures, '2')
     t.equal(testsuites.$.skipped, '0')
+    t.equal(testsuites.testsuite[0].testcase[0].$.status, 'success')
+    t.equal(testsuites.testsuite[0].testcase[0].$.assertions, '2')
     t.equal(testsuites.testsuite[0].testcase[1].$.status, 'success')
+    t.equal(testsuites.testsuite[0].testcase[1].$.assertions, '2')
     t.equal(testsuites.testsuite[0].testcase[2].$.status, 'failed')
+    t.equal(
+        testsuites.testsuite[0].testcase[2].$.assertions,
+        '1',
+        'shall abort if waitUntil fails'
+    )
     t.equal(testsuites.testsuite[0].testcase[3].$.status, 'failed')
+    t.equal(
+        testsuites.testsuite[0].testcase[3].$.assertions,
+        '1',
+        'shall abort if waitUntil fails'
+    )
 })

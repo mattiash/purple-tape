@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+-   Abort test if waitUntil fails
+
 ## [3.6.0] 2020-06-18
 
 -   Add waitUntil method

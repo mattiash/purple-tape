@@ -45,7 +45,6 @@ export class Test {
                 passedChecks++
                 console.log(`ok ${passedChecks + failedChecks} ${message}`)
             } else {
-                this.assertions++
                 if (result === 'failed') {
                     failedChecks++
                 } else {
@@ -508,7 +507,9 @@ export class Test {
             }
         } catch (err) {
         } finally {
-            this.endWait()
+            if (!this.endWait()) {
+                throw new WaitUntilFailed()
+            }
         }
     }
 }
@@ -516,3 +517,5 @@ export class Test {
 function wait(ms: number) {
     return new Promise((resolve) => setTimeout(resolve, ms))
 }
+
+export class WaitUntilFailed extends Error {}
