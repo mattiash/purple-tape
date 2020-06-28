@@ -102,6 +102,57 @@ ok 8 - shall run afterAll
 # pass  8
 ```
 
+### tryUntil
+
+The t-object contains a method called `tryUntil` that can be used to
+try an operation over and over again until it succeeds or a timeout is reached.
+
+```
+t.tryUntil(
+    async () => t.equal(await dut.status(), 'ok', 'shall return status ok'),
+    30_000
+)
+```
+
+The above example will run `await dut.status()` over and over again
+until it returns ok or until 30 seconds have passed.
+The test-output will only contain the output of the last invocation
+of the function, i.e. either
+
+```
+# ok 1 shall return status ok
+```
+
+or
+
+```
+# not ok 1 shall return status ok
+...
+```
+
+The first parameter for the tryUntil method is the function that shall be run.
+The test is regarded as a success if it runs at least one assertion method
+(`ok`, `equal`, `pass` etc) and all assertion methods return an ok status.
+
+The tryUntil method passes a single parameter to the function which is the
+t-object itself.
+This means that the following code has the exact same result as the previous example:
+
+```
+t.tryUntil(
+    async (t2) => t2.equal(await dut.status(), 'ok', 'shall return status ok'),
+    30_000
+)
+```
+
+The tryUntil method takes a third, optional argument which is the interval.
+tryUntil will wait this many milliseconds between each invocation of the
+test-function.
+If the interval is omitted, it defaults to the interval divided by 30,
+but at least 100 ms and at most 5 seconds.
+
+If the tryUntil check fails, it will abort the current test().
+
 ## Generating junit xml output
 
 To generate junit xml according to https://llg.cubic.org/docs/junit/,
@@ -125,3 +176,7 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+```
+
+```

@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+-   Rename waitUntil as tryUntil and add more documentation.
+
 ## [3.6.2] 2020-06-27
 
 -   Use reasonable default for waitUntil interval.

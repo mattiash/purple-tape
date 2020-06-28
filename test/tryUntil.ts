@@ -1,9 +1,9 @@
 import 'source-map-support/register'
 import { test } from '../index'
 
-test('waitUntil synchronous', async (t) => {
+test('tryUntil synchronous', async (t) => {
     let tries = 0
-    await t.waitUntil(
+    await t.tryUntil(
         () => {
             tries++
             t.equal(tries, 3)
@@ -15,9 +15,9 @@ test('waitUntil synchronous', async (t) => {
     t.true(true)
 })
 
-test('waitUntil asynchronous', async (t) => {
+test('tryUntil asynchronous', async (t) => {
     let tries = 0
-    await t.waitUntil(
+    await t.tryUntil(
         async () => {
             tries++
             await wait(50)
@@ -30,9 +30,9 @@ test('waitUntil asynchronous', async (t) => {
     t.true(true)
 })
 
-test('waitUntil synchronous fail', async (t) => {
+test('tryUntil synchronous fail', async (t) => {
     let tries = 0
-    await t.waitUntil(
+    await t.tryUntil(
         () => {
             tries++
             t.equal(tries, 6)
@@ -44,9 +44,9 @@ test('waitUntil synchronous fail', async (t) => {
     t.true(true)
 })
 
-test('waitUntil asynchronous fail', async (t) => {
+test('tryUntil asynchronous fail', async (t) => {
     let tries = 0
-    await t.waitUntil(
+    await t.tryUntil(
         async () => {
             tries++
             await wait(50)

@@ -23,7 +23,7 @@ export class Test {
     protected firstNonSuccessMessage: string | undefined
     protected firstNonSuccessStatus: 'error' | 'failed' | undefined
 
-    private isWaiting = false
+    private isTryUntil = false
     private waitQueue = new Array<{
         result: 'pass' | 'error' | 'failed'
         message: string
@@ -37,7 +37,7 @@ export class Test {
         message: string,
         extra: any
     ) {
-        if (this.isWaiting) {
+        if (this.isTryUntil) {
             this.waitQueue.push({ result, message, extra })
         } else {
             this.assertions++
@@ -445,19 +445,19 @@ export class Test {
         throw new BailError()
     }
 
-    private startWait() {
-        if (this.isWaiting) {
-            throw new Error('Cannot waitUntil in waitUntil')
+    private startTryUntil() {
+        if (this.isTryUntil) {
+            throw new Error('Cannot tryUntil in tryUntil')
         } else {
-            this.isWaiting = true
+            this.isTryUntil = true
         }
     }
 
-    private endWait() {
-        if (this.isWaiting) {
-            this.isWaiting = false
+    private endTryUntil() {
+        if (this.isTryUntil) {
+            this.isTryUntil = false
             if (this.waitQueue.length === 0) {
-                this.fail('waitUntil did not run any checks')
+                this.fail('tryUntil did not run any checks')
                 return false
             } else {
                 const success = this.waitSuccess()
@@ -484,19 +484,19 @@ export class Test {
     }
 
     /**
-     * Wait until all checks in fn succeeds or until
+     * Try a test-function fn until all checks in fn succeeds or until
      * timeout expires. Wait interval ms between each invocation
      * of fn.
      *
-     * If waitUntil times out without all checks succeeding,
+     * If tryUntil times out without all checks succeeding,
      * it will abort the entire test()-case by throwing an exception
      * that is caught by purple-tape
      *
      * interval defaults to interval/30 but at least 100ms and at most 5s.
      */
-    async waitUntil(fn: WaitFn, timeout: number, interval?: number) {
+    async tryUntil(fn: WaitFn, timeout: number, interval?: number) {
         interval = interval ?? smartInterval(timeout)
-        this.startWait()
+        this.startTryUntil()
         const start = Date.now()
         try {
             let done = false
@@ -514,7 +514,7 @@ export class Test {
             }
         } catch (err) {
         } finally {
-            if (!this.endWait()) {
+            if (!this.endTryUntil()) {
                 throw new WaitUntilFailed()
             }
         }
