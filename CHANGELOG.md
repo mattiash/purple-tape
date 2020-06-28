@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [3.6.3] 2020-06-28
+
 -   Rename waitUntil as tryUntil and add more documentation.
 
 ## [3.6.2] 2020-06-27
