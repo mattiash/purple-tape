@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [3.6.4] 2020-08-19
+
 -   Include documentation in typescript definitions
 
 ## [3.6.3] 2020-06-28
