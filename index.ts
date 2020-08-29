@@ -14,6 +14,19 @@ import { basename } from 'path'
 import { writeFileSync } from 'fs'
 import { PurpleTapeTest } from './lib/purple-tape-test'
 
+let uncaughtExceptions = new Array<Error>()
+let unhandledRejections = new Array<any>()
+
+process.on('uncaughtException', (err) => {
+    console.log(err)
+    uncaughtExceptions.push(err)
+})
+
+process.on('unhandledRejection', (err) => {
+    console.log(err)
+    unhandledRejections.push(err)
+})
+
 const OriginalDate = Date
 
 type TestFunction = (t: Test) => void | Promise<void>
@@ -189,13 +202,32 @@ async function summarize(tr: TestReport) {
         currentTest['addAssertion']('error', 'process.exit called', {})
         currentTest.endTest()
         tr.entries.push(currentTest)
-    } else if (process.exitCode) {
+    } else if (
+        process.exitCode ||
+        unhandledRejections.length ||
+        uncaughtExceptions.length
+    ) {
         console.log('\n# Purple-tape internal')
-        const pt = new PurpleTapeTest('')
-        pt.errorOut(`exited with error ${process.exitCode}`)
+        const pt = new PurpleTapeTest('Purple-tape internal')
+        if (process.exitCode) {
+            pt.errorOut(`exited with error ${process.exitCode}`)
+        }
+        if (unhandledRejections.length) {
+            pt.errorOut(
+                `${unhandledRejections.length} unhandled rejection(s)`,
+                unhandledRejections.map((r) => (r.stack ? r.stack : r))
+            )
+        }
+        if (uncaughtExceptions.length) {
+            pt.errorOut(
+                `${uncaughtExceptions.length} uncaught exception(s)`,
+                uncaughtExceptions.map((e) => (e.stack ? e.stack : e))
+            )
+        }
         pt.endTest()
         tr.entries.push(pt)
     }
+
     if (process.env.PT_XUNIT_FILE) {
         writeFileSync(process.env.PT_XUNIT_FILE, generateXunit(tr))
     }

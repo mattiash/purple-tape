@@ -4,6 +4,7 @@
 
 -   Fail test if process.exit(1) is called after test
 -   Generate valid xml on premature exit
+-   Fail test on unhandled exceptions and rejections
 
 ## [3.6.4] 2020-08-19
 
