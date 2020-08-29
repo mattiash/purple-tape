@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 -   Fail test if process.exit(1) is called after test
+-   Generate valid xml on premature exit
 
 ## [3.6.4] 2020-08-19
 
