@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [3.7.0]
+
 -   Fail test if process.exit(1) is called after test
 -   Generate valid xml on premature exit
 -   Fail test on unhandled exceptions and rejections
