@@ -180,15 +180,21 @@ async function run() {
 
     if (bailOut) {
         // Avoid something hanging the process after a bailout
-        process.exit(1)
+        process.exit()
     }
 }
 
-function summarize(tr: TestReport) {
+async function summarize(tr: TestReport) {
     if (!currentTest.ended) {
         currentTest['addAssertion']('error', 'process.exit called', {})
         currentTest.endTest()
         tr.entries.push(currentTest)
+    } else if (process.exitCode) {
+        console.log('\n# Purple-tape internal')
+        const pt = new PurpleTapeTest('')
+        pt.errorOut(`exited with error ${process.exitCode}`)
+        pt.endTest()
+        tr.entries.push(pt)
     }
     if (process.env.PT_XUNIT_FILE) {
         writeFileSync(process.env.PT_XUNIT_FILE, generateXunit(tr))
@@ -201,6 +207,8 @@ function summarize(tr: TestReport) {
         console.log(`# fail  ${failedChecks + erroredChecks}`)
         process.exitCode = 1
     }
+
+    console.log()
 }
 
 setImmediate(run)

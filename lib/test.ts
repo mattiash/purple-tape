@@ -43,7 +43,11 @@ export class Test {
             this.assertions++
             if (result === 'pass') {
                 passedChecks++
-                console.log(`ok ${passedChecks + failedChecks} ${message}`)
+                console.log(
+                    `ok ${passedChecks +
+                        failedChecks +
+                        erroredChecks} ${message}`
+                )
             } else {
                 if (result === 'failed') {
                     failedChecks++
@@ -56,7 +60,11 @@ export class Test {
                         message + (extra ? `\n${inlineYamlBlock(extra)}` : '')
                     this.firstNonSuccessStatus = result
                 }
-                console.log(`not ok ${passedChecks + failedChecks} ${message}`)
+                console.log(
+                    `not ok ${passedChecks +
+                        failedChecks +
+                        erroredChecks} ${message}`
+                )
                 if (extra) {
                     console.log(inlineYamlBlock(extra))
                 }

@@ -272,6 +272,17 @@ test('premature-exit', async (t) => {
     t.equal(testsuites.$.skipped, '0')
 })
 
+test('exit-after-last-test', async (t) => {
+    const res = await runTest('./exit-after-last-test.js')
+    const testsuites = res.xml.testsuites
+
+    t.equal(res.exitCode, 1, 'test shall not pass')
+    t.equal(testsuites.$.tests, '2')
+    t.equal(testsuites.$.errors, '1')
+    t.equal(testsuites.$.failures, '0')
+    t.equal(testsuites.$.skipped, '0')
+})
+
 test('tryUntil', async (t) => {
     const res = await runTest('./tryUntil.js')
     const testsuites = res.xml.testsuites

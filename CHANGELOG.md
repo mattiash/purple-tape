@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+-   Fail test if process.exit(1) is called after test
+
 ## [3.6.4] 2020-08-19
 
 -   Include documentation in typescript definitions
