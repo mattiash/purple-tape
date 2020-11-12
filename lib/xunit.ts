@@ -80,9 +80,15 @@ export function generateXunit(tr: TestReport) {
 
 export function prematureXunit(name: string, startTime: Date) {
     return `<?xml version="1.0" encoding="UTF-8"?>
-<testsuites tests="1" skipped="0" errors="1" failures="0" name="${name}" time="0">
-<testsuite tests="1" skipped="0" errors="1" failures="0" name="${name}" time="0" timestamp="${startTime.toISOString()}">
-<testcase name="no premature exit" classname="${name}" assertions="1" status="error" time="0">
+<testsuites tests="1" skipped="0" errors="1" failures="0" name="${attr(
+        name
+    )}" time="0">
+<testsuite tests="1" skipped="0" errors="1" failures="0" name="${attr(
+        name
+    )}" time="0" timestamp="${startTime.toISOString()}">
+<testcase name="no premature exit" classname="${attr(
+        name
+    )}" assertions="1" status="error" time="0">
 <error message="not used" type="notUsed"><![CDATA[Test exited without writing a proper xml-file]]></error>
 </testcase>
 </testsuite>
