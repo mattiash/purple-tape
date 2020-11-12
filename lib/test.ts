@@ -177,7 +177,21 @@ export class Test {
     /**
      * Check that **actual** === **expected**.
      */
-    equal<T>(actual: T, expected: T, message = `${actual} === ${expected}`) {
+    equal<T>(actual: T, expected: T, message?: string) {
+        if (message === undefined) {
+            if (
+                typeof actual === 'string' &&
+                typeof expected === 'string' &&
+                (actual.match(/\s/) || expected.match(/\s/))
+            ) {
+                message = `'${actual.replace(
+                    /\n/g,
+                    '\\n'
+                )}' === '${expected.replace(/\n/g, '\\n')}'`
+            } else {
+                message = `${actual} === ${expected}`
+            }
+        }
         if (actual === expected) {
             this.pass(message)
         } else {
