@@ -2,9 +2,13 @@
 
 ## [Unreleased]
 
--   Add errorComment() method
+## [3.8.0] 2020-11-12
 
-## [3.7.0]
+-   Add errorComment() method
+-   Escape newline in equal() message
+-   Escape test name in prematureXunit
+
+## [3.7.0] 2020-08-29
 
 -   Fail test if process.exit(1) is called after test
 -   Generate valid xml on premature exit
