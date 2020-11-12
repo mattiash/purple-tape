@@ -98,11 +98,18 @@ test.skip = (title: string, fn: TestFunction) => {
     test(title, { skip: true }, fn)
 }
 
-async function runTest(title: string, fn: TestFunction) {
+async function runTest(
+    title: string,
+    fn: TestFunction,
+    ptParent?: PurpleTapeTest
+) {
     if (bailOut) {
         return undefined
     } else {
         currentTest = new PurpleTapeTest(title)
+        if (ptParent) {
+            currentTest.errorCommentFns = [...ptParent.errorCommentFns]
+        }
         console.log(`\n# ${title}`)
 
         try {
@@ -162,14 +169,15 @@ async function run() {
     for (let [title, fn] of tests) {
         if (fn) {
             let beforeEachSucceded = true
+            let ptBefore: PurpleTapeTest | undefined
             if (beforeEach) {
-                const pt = await runTest(`beforeEach ${title}`, beforeEach)
-                tr.entries.push(pt)
-                beforeEachSucceded = !!pt && pt.succeeded()
+                ptBefore = await runTest(`beforeEach ${title}`, beforeEach)
+                tr.entries.push(ptBefore)
+                beforeEachSucceded = !!ptBefore && ptBefore.succeeded()
             }
 
             if (beforeEachSucceded) {
-                const pt = await runTest(title, fn)
+                const pt = await runTest(title, fn, ptBefore)
                 tr.entries.push(pt)
             }
 

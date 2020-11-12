@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+-   Add errorComment() method
+
 ## [3.7.0]
 
 -   Fail test if process.exit(1) is called after test

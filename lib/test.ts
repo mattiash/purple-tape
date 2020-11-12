@@ -30,6 +30,8 @@ export class Test {
         extra: any
     }>()
 
+    errorCommentFns = new Array<() => string>()
+
     constructor(readonly title: string) {}
 
     private addAssertion(
@@ -49,6 +51,10 @@ export class Test {
                         erroredChecks} ${message}`
                 )
             } else {
+                const errorComments = this.errorCommentFns
+                    .map((fn) => fn())
+                    .filter((s) => !!s)
+
                 if (result === 'failed') {
                     failedChecks++
                 } else {
@@ -56,8 +62,13 @@ export class Test {
                 }
                 if (this.success) {
                     this.success = false
-                    this.firstNonSuccessMessage =
-                        message + (extra ? `\n${inlineYamlBlock(extra)}` : '')
+                    this.firstNonSuccessMessage = [
+                        message,
+                        extra ? inlineYamlBlock(extra) : '',
+                        ...errorComments,
+                    ]
+                        .filter((s) => !!s)
+                        .join('\n')
                     this.firstNonSuccessStatus = result
                 }
                 console.log(
@@ -68,6 +79,7 @@ export class Test {
                 if (extra) {
                     console.log(inlineYamlBlock(extra))
                 }
+                errorComments.map((s) => this.comment(s))
             }
         }
     }
@@ -449,6 +461,22 @@ export class Test {
     comment(message: string) {
         this.assertNotEnded()
         console.log(`# ${message}`)
+    }
+
+    /**
+     * Include this comment in the output if
+     * an assertion in the test errors or fails.
+     *
+     * Carries over from beforeEach to the actual test.
+     * If a function is passed, the function will be executed
+     * after the assertion has failed.
+     */
+    errorComment(message: string | (() => string)) {
+        if (typeof message === 'string') {
+            this.errorCommentFns.push(() => message)
+        } else {
+            this.errorCommentFns.push(message)
+        }
     }
 
     /**
