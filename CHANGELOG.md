@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+-   New method passWhile
+
 ## [3.8.0] 2020-11-12
 
 -   Add errorComment() method

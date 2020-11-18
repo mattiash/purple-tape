@@ -6,7 +6,7 @@ import {
     passedChecks,
     failedChecks,
     erroredChecks,
-    WaitUntilFailed,
+    TryUntilFailed,
 } from './lib/test'
 export { Test }
 import { TestReport, generateXunit, prematureXunit } from './lib/xunit'
@@ -115,7 +115,7 @@ async function runTest(
         try {
             await fn(currentTest)
         } catch (e) {
-            if (e instanceof BailError || e instanceof WaitUntilFailed) {
+            if (e instanceof BailError || e instanceof TryUntilFailed) {
             } else {
                 currentTest.errorOut('shall not throw exception', {
                     stack: e?.stack || '',

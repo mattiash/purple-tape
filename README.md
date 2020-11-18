@@ -108,7 +108,7 @@ The t-object contains a method called `tryUntil` that can be used to
 try an operation over and over again until it succeeds or a timeout is reached.
 
 ```
-t.tryUntil(
+await t.tryUntil(
     async () => t.equal(await dut.status(), 'ok', 'shall return status ok'),
     30_000
 )
@@ -139,7 +139,7 @@ t-object itself.
 This means that the following code has the exact same result as the previous example:
 
 ```
-t.tryUntil(
+await t.tryUntil(
     async (t2) => t2.equal(await dut.status(), 'ok', 'shall return status ok'),
     30_000
 )
@@ -152,6 +152,24 @@ If the interval is omitted, it defaults to the interval divided by 30,
 but at least 100 ms and at most 5 seconds.
 
 If the tryUntil check fails, it will abort the current test().
+
+### passWhile
+
+The passWhile method works the same way as the tryUntil method,
+but for passWhile, the expectation is that the tests in the function shall pass
+every time the function is called.
+The promise returned by passWhile resolves after the timeout has passed
+or the tests in the function fails, whichever happens first.
+
+In the following example, the return value of dut.status will be checked multiple times
+during 30 seconds and it must return 'ok' every time in order for the test to pass.
+
+```
+await t.passWhile(
+    async () => t.equal(await dut.status(), 'ok', 'shall return status ok'),
+    30_000
+)
+```
 
 ## Generating junit xml output
 

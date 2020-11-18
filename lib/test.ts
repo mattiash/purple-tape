@@ -23,7 +23,8 @@ export class Test {
     protected firstNonSuccessMessage: string | undefined
     protected firstNonSuccessStatus: 'error' | 'failed' | undefined
 
-    private isTryUntil = false
+    private iterativeTestingMode: undefined | 'tryUntil' | 'passWhile'
+
     private waitQueue = new Array<{
         result: 'pass' | 'error' | 'failed'
         message: string
@@ -39,7 +40,7 @@ export class Test {
         message: string,
         extra: any
     ) {
-        if (this.isTryUntil) {
+        if (this.iterativeTestingMode) {
             this.waitQueue.push({ result, message, extra })
         } else {
             this.assertions++
@@ -495,30 +496,49 @@ export class Test {
         throw new BailError()
     }
 
-    private startTryUntil() {
-        if (this.isTryUntil) {
-            throw new Error('Cannot tryUntil in tryUntil')
+    private startIterativeTesting(mode: 'tryUntil' | 'passWhile') {
+        if (this.iterativeTestingMode) {
+            throw new Error(`Cannot ${mode} in ${this.iterativeTestingMode}`)
         } else {
-            this.isTryUntil = true
+            this.iterativeTestingMode = mode
+        }
+    }
+
+    private endIterativeTesting() {
+        if (this.iterativeTestingMode) {
+            this.iterativeTestingMode = undefined
+        } else {
+            throw new Error('Not in interativeTesting state')
         }
     }
 
     private endTryUntil() {
-        if (this.isTryUntil) {
-            this.isTryUntil = false
-            if (this.waitQueue.length === 0) {
-                this.fail('tryUntil did not run any checks')
-                return false
-            } else {
-                const success = this.waitSuccess()
-                for (const a of this.waitQueue) {
-                    this.addAssertion(a.result, a.message, a.extra)
-                }
-                this.waitQueue.length = 0
-                return success
-            }
+        this.endIterativeTesting()
+        if (this.waitQueue.length === 0) {
+            this.fail('tryUntil did not run any checks')
+            return false
         } else {
-            throw new Error('Not in waiting state')
+            const success = this.waitSuccess()
+            for (const a of this.waitQueue) {
+                this.addAssertion(a.result, a.message, a.extra)
+            }
+            this.waitQueue.length = 0
+            return success
+        }
+    }
+
+    private endPassUntil() {
+        this.endIterativeTesting()
+        if (this.waitQueue.length === 0) {
+            this.fail('passWhile did not run any checks')
+            return false
+        } else {
+            const success = this.waitSuccess()
+            for (const a of this.waitQueue) {
+                this.addAssertion(a.result, a.message, a.extra)
+            }
+            this.waitQueue.length = 0
+            return success
         }
     }
 
@@ -546,7 +566,7 @@ export class Test {
      */
     async tryUntil(fn: WaitFn, timeout: number, interval?: number) {
         interval = interval ?? smartInterval(timeout)
-        this.startTryUntil()
+        this.startIterativeTesting('tryUntil')
         const start = Date.now()
         try {
             let done = false
@@ -565,8 +585,50 @@ export class Test {
         } catch (err) {
         } finally {
             if (!this.endTryUntil()) {
-                throw new WaitUntilFailed()
+                throw new TryUntilFailed()
             }
+        }
+    }
+
+    /**
+     * Run a test-function fn over and over again and verify that all checks in fn succeeds
+     * every time it runs. Wait interval ms between each invocation
+     * of fn.
+     *
+     * passWhile exits after timeout ms or the first time that the fn in fn do not all pass.
+     * passWhile will only add the result of the checks in the last invocation of fn
+     * to the test output.
+     *
+     * interval defaults to interval/30 but at least 100ms and at most 5s.
+     */
+    async passWhile(fn: WaitFn, timeout: number, interval?: number) {
+        interval = interval ?? smartInterval(timeout)
+        this.startIterativeTesting('passWhile')
+        const start = Date.now()
+        let iterations = 0
+        try {
+            let done = false
+            while (!done) {
+                this.resetWait()
+                iterations++
+                await fn(this)
+                if (!this.waitSuccess()) {
+                    done = true
+                } else {
+                    done = Date.now() + interval > start + timeout
+                    if (!done) {
+                        await wait(interval)
+                    }
+                }
+            }
+        } catch (err) {
+        } finally {
+            this.endPassUntil()
+            this.comment(
+                `passWhile done after ${Math.floor(
+                    (Date.now() - start) / 1000
+                )} seconds ${iterations} iterations`
+            )
         }
     }
 }
@@ -582,4 +644,4 @@ export function smartInterval(timeout: number) {
     return Math.min(MAX_INTERVAL, Math.max(MIN_INTERVAL, interval))
 }
 
-export class WaitUntilFailed extends Error {}
+export class TryUntilFailed extends Error {}

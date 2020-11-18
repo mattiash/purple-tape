@@ -331,6 +331,33 @@ test('tryUntil', async (t) => {
     )
 })
 
+test('passWhile', async (t) => {
+    const res = await runTest('./passWhile.js')
+    const testsuites = res.xml.testsuites
+
+    t.equal(res.exitCode, 1, 'test shall not pass')
+    t.equal(testsuites.$.tests, '4')
+    t.equal(testsuites.$.errors, '0')
+    t.equal(testsuites.$.failures, '2')
+    t.equal(testsuites.$.skipped, '0')
+    t.equal(testsuites.testsuite[0].testcase[0].$.status, 'success')
+    t.equal(testsuites.testsuite[0].testcase[0].$.assertions, '2')
+    t.equal(testsuites.testsuite[0].testcase[1].$.status, 'success')
+    t.equal(testsuites.testsuite[0].testcase[1].$.assertions, '2')
+    t.equal(testsuites.testsuite[0].testcase[2].$.status, 'failed')
+    t.equal(
+        testsuites.testsuite[0].testcase[2].$.assertions,
+        '2',
+        'shall continue if passWhile fails'
+    )
+    t.equal(testsuites.testsuite[0].testcase[3].$.status, 'failed')
+    t.equal(
+        testsuites.testsuite[0].testcase[3].$.assertions,
+        '2',
+        'shall continue if passWhile fails'
+    )
+})
+
 test('error-comment', async (t) => {
     const res = await runTest('./error-comment.js')
     const testsuites = res.xml.testsuites
