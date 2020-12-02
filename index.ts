@@ -129,17 +129,6 @@ async function runTest(
 }
 
 async function run() {
-    if (process.env.PT_XUNIT_FILE) {
-        writeFileSync(
-            process.env.PT_XUNIT_FILE,
-            prematureXunit(
-                process.env.PT_XUNIT_NAME ||
-                    basename(require.main?.filename || ''),
-                new Date()
-            )
-        )
-    }
-
     console.log('TAP version 13')
     let tr: TestReport = {
         name:
@@ -249,6 +238,16 @@ async function summarize(tr: TestReport) {
     }
 
     console.log()
+}
+
+if (process.env.PT_XUNIT_FILE) {
+    writeFileSync(
+        process.env.PT_XUNIT_FILE,
+        prematureXunit(
+            process.env.PT_XUNIT_NAME || basename(require.main?.filename || ''),
+            new Date()
+        )
+    )
 }
 
 setImmediate(run)

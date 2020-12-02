@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+-   Write fallback xml as soon as possible
+
 ## [3.9.0] 2020-11-18
 
 -   New method passWhile
