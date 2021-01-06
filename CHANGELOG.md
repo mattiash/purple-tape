@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [3.9.2] 2021-01-06
+
 -   Define error-handling for tryUntil / passWhile
 
 ## [3.9.1] 2020-12-02
