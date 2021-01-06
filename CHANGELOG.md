@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+-   Define error-handling for tryUntil / passWhile
+
 ## [3.9.1] 2020-12-02
 
 -   Write fallback xml as soon as possible

@@ -565,28 +565,39 @@ export class Test {
      * interval defaults to interval/30 but at least 100ms and at most 5s.
      */
     async tryUntil(fn: WaitFn, timeout: number, interval?: number) {
+        let iterations = 0
         interval = interval ?? smartInterval(timeout)
         this.startIterativeTesting('tryUntil')
         const start = Date.now()
-        try {
-            let done = false
-            while (!done) {
-                this.resetWait()
+        let done = false
+        while (!done) {
+            this.resetWait()
+            iterations++
+            try {
                 await fn(this)
-                if (this.waitSuccess()) {
-                    done = true
-                } else {
-                    done = Date.now() + interval > start + timeout
-                    if (!done) {
-                        await wait(interval)
-                    }
+            } catch (err) {
+                this.errorOut('shall not throw exception', {
+                    stack: err.stack || '',
+                })
+            }
+            if (this.waitSuccess()) {
+                done = true
+            } else {
+                done = Date.now() + interval > start + timeout
+                if (!done) {
+                    await wait(interval)
                 }
             }
-        } catch (err) {
-        } finally {
-            if (!this.endTryUntil()) {
-                throw new TryUntilFailed()
-            }
+        }
+        const success = this.endTryUntil()
+        this.comment(
+            `tryUntil done after ${Math.floor(
+                (Date.now() - start) / 1000
+            )} seconds ${iterations} iterations`
+        )
+
+        if (!success) {
+            throw new TryUntilFailed()
         }
     }
 
@@ -606,30 +617,32 @@ export class Test {
         this.startIterativeTesting('passWhile')
         const start = Date.now()
         let iterations = 0
-        try {
-            let done = false
-            while (!done) {
-                this.resetWait()
-                iterations++
+        let done = false
+        while (!done) {
+            this.resetWait()
+            iterations++
+            try {
                 await fn(this)
-                if (!this.waitSuccess()) {
-                    done = true
-                } else {
-                    done = Date.now() + interval > start + timeout
-                    if (!done) {
-                        await wait(interval)
-                    }
+            } catch (err) {
+                this.errorOut('shall not throw exception', {
+                    stack: err.stack || '',
+                })
+            }
+            if (!this.waitSuccess()) {
+                done = true
+            } else {
+                done = Date.now() + interval > start + timeout
+                if (!done) {
+                    await wait(interval)
                 }
             }
-        } catch (err) {
-        } finally {
-            this.endPassUntil()
-            this.comment(
-                `passWhile done after ${Math.floor(
-                    (Date.now() - start) / 1000
-                )} seconds ${iterations} iterations`
-            )
         }
+        this.endPassUntil()
+        this.comment(
+            `passWhile done after ${Math.floor(
+                (Date.now() - start) / 1000
+            )} seconds ${iterations} iterations`
+        )
     }
 }
 

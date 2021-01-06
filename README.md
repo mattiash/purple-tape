@@ -151,6 +151,10 @@ test-function.
 If the interval is omitted, it defaults to the interval divided by 30,
 but at least 100 ms and at most 5 seconds.
 
+If the function throws an error, that invocation of the function is considered as failed.
+If an error is thrown in the last invocation of the function,
+the error will be reported and tryUntil will have failed.
+
 If the tryUntil check fails, it will abort the current test().
 
 ### passWhile
@@ -170,6 +174,9 @@ await t.passWhile(
     30_000
 )
 ```
+
+If the function throws an error, that invocation of the function is considered as failed
+and passWhile will fail, but the test will not be aborted.
 
 ## Generating junit xml output
 

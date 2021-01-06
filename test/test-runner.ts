@@ -341,6 +341,25 @@ test('tryUntil', async (t) => {
     )
 })
 
+test('tryUntil-throw', async (t) => {
+    const res = await runTest('./tryUntil-throw.js')
+    const testsuites = res.xml.testsuites
+
+    t.equal(res.exitCode, 1, 'test shall not pass')
+    t.equal(testsuites.$.tests, '2')
+    t.equal(testsuites.$.errors, '1')
+    t.equal(testsuites.$.failures, '0')
+    t.equal(testsuites.$.skipped, '0')
+    t.equal(testsuites.testsuite[0].testcase[0].$.status, 'success')
+    t.equal(testsuites.testsuite[0].testcase[0].$.assertions, '3')
+    t.equal(testsuites.testsuite[0].testcase[1].$.status, 'error')
+    t.equal(
+        testsuites.testsuite[0].testcase[1].$.assertions,
+        '2',
+        'shall abort if tryUntil fails'
+    )
+})
+
 test('passWhile', async (t) => {
     const res = await runTest('./passWhile.js')
     const testsuites = res.xml.testsuites
@@ -364,6 +383,23 @@ test('passWhile', async (t) => {
     t.equal(
         testsuites.testsuite[0].testcase[3].$.assertions,
         '2',
+        'shall continue if passWhile fails'
+    )
+})
+
+test('passWhile-throw', async (t) => {
+    const res = await runTest('./passWhile-throw.js')
+    const testsuites = res.xml.testsuites
+
+    t.equal(res.exitCode, 1, 'test shall not pass')
+    t.equal(testsuites.$.tests, '1')
+    t.equal(testsuites.$.errors, '1')
+    t.equal(testsuites.$.failures, '0')
+    t.equal(testsuites.$.skipped, '0')
+    t.equal(testsuites.testsuite[0].testcase[0].$.status, 'error')
+    t.equal(
+        testsuites.testsuite[0].testcase[0].$.assertions,
+        '3',
         'shall continue if passWhile fails'
     )
 })
