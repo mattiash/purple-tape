@@ -4,33 +4,19 @@ import { testSelf } from './util'
 
 testSelf(
     () => {
-        test('call t after returning', (t) => {
-            t.pass('This shall run')
-            setTimeout(() => t.pass('this shall lead to error'), 1000)
+        test('error throw error', () => {
+            throw new Error('test error')
         })
 
-        test('ok test', (t) => {
-            t.pass('ok')
+        test('error throw string', () => {
+            throw 'a string'
         })
     },
     (t, { testsuites, exitCode }) => {
         t.equal(exitCode, 1, 'test shall not pass')
         t.equal(testsuites.$.tests, '2')
-        t.equal(testsuites.$.errors, '1')
+        t.equal(testsuites.$.errors, '2')
         t.equal(testsuites.$.failures, '0')
         t.equal(testsuites.$.skipped, '0')
     }
 )
-
-/*
-import { testSelf } from './util'
-
-testSelf(
-    () => {
-
-    },
-    (t, { testsuites, exitCode }) => {
-
-    }
-)
-*/
