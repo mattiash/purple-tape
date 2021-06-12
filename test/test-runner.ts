@@ -195,17 +195,6 @@ test('test-complete', async (t) => {
     t.equal(testsuites.$.skipped, '1')
 })
 
-test('continue-after-return', async (t) => {
-    const res = await runTest('./continue-after-return.js')
-    const testsuites = res.xml.testsuites
-
-    t.equal(res.exitCode, 1, 'test shall not pass')
-    t.equal(testsuites.$.tests, '2')
-    t.equal(testsuites.$.errors, '1')
-    t.equal(testsuites.$.failures, '0')
-    t.equal(testsuites.$.skipped, '0')
-})
-
 test('exit', async (t) => {
     const res = await runTest('./exit.js')
     const testsuites = res.xml.testsuites

@@ -29,7 +29,7 @@ process.on('unhandledRejection', (err) => {
 
 const OriginalDate = Date
 
-type TestFunction = (t: Test) => void | Promise<void>
+export type TestFunction = (t: Test) => void | Promise<void>
 
 type TestEntry = [string, TestFunction | undefined]
 

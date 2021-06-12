@@ -10,7 +10,7 @@
     "scripts": {
         "lint": "prettier -l *.ts lib/*.ts test/*.ts",
         "build": "tsc",
-        "test": "node build/test/test-verification-functions.js && node build/test/test-runner.js && node build/test/test-yaml.js && node build/test/test-smart-interval.js"
+        "test": "multi-tape build/test/test-*.js"
     },
     "author": "Mattias Holmlund",
     "license": "MIT",
@@ -30,6 +30,7 @@
         "@types/node": "^13.13.2",
         "@types/object-inspect": "^1.6.0",
         "@types/xml2js": "^0.4.5",
+        "multi-tape": "^1.6.1",
         "prettier": "^1.19.1",
         "source-map-support": "^0.5.16",
         "tempy": "^0.5.0",
