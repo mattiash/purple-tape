@@ -21,16 +21,3 @@ testSelf(
         t.equal(testsuites.$.skipped, '0')
     }
 )
-
-/*
-import { testSelf } from './util'
-
-testSelf(
-    () => {
-
-    },
-    (t, { testsuites, exitCode }) => {
-
-    }
-)
-*/
