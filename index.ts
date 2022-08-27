@@ -114,11 +114,11 @@ async function runTest(
 
         try {
             await fn(currentTest)
-        } catch (e) {
+        } catch (e: unknown) {
             if (e instanceof BailError || e instanceof TryUntilFailed) {
             } else {
                 currentTest.errorOut('shall not throw exception', {
-                    stack: e?.stack || '',
+                    stack: e instanceof Error ? e.stack : '',
                 })
             }
         }

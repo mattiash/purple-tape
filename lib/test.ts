@@ -47,9 +47,9 @@ export class Test {
             if (result === 'pass') {
                 passedChecks++
                 console.log(
-                    `ok ${passedChecks +
-                        failedChecks +
-                        erroredChecks} ${message}`
+                    `ok ${
+                        passedChecks + failedChecks + erroredChecks
+                    } ${message}`
                 )
             } else {
                 const errorComments = this.errorCommentFns
@@ -73,9 +73,9 @@ export class Test {
                     this.firstNonSuccessStatus = result
                 }
                 console.log(
-                    `not ok ${passedChecks +
-                        failedChecks +
-                        erroredChecks} ${message}`
+                    `not ok ${
+                        passedChecks + failedChecks + erroredChecks
+                    } ${message}`
                 )
                 if (extra) {
                     console.log(inlineYamlBlock(extra))
@@ -317,13 +317,14 @@ export class Test {
         try {
             fn()
             this.fail(message)
-        } catch (err) {
-            if (err.toString().match(expected)) {
+        } catch (err: unknown) {
+            const str = (typeof err === 'object' && err?.toString()) || ''
+            if (str.match(expected)) {
                 this.pass(message)
             } else {
                 this.fail(message, {
                     operator: 'throws',
-                    actual: err.toString(),
+                    actual: str,
                     expected,
                     stack: new Error('wrong exception thrown').stack,
                 })
@@ -347,7 +348,7 @@ export class Test {
         try {
             fn()
             this.pass(message)
-        } catch (err) {
+        } catch (err: any) {
             if (err.toString().match(expected)) {
                 this.fail(message, {
                     operator: 'doesNotThrow',
@@ -575,9 +576,9 @@ export class Test {
             iterations++
             try {
                 await fn(this)
-            } catch (err) {
+            } catch (err: unknown) {
                 this.errorOut('shall not throw exception', {
-                    stack: err.stack || '',
+                    stack: err instanceof Error ? err.stack : '',
                 })
             }
             if (this.waitSuccess()) {
@@ -623,9 +624,9 @@ export class Test {
             iterations++
             try {
                 await fn(this)
-            } catch (err) {
+            } catch (err: unknown) {
                 this.errorOut('shall not throw exception', {
-                    stack: err.stack || '',
+                    stack: err instanceof Error ? err.stack : '',
                 })
             }
             if (!this.waitSuccess()) {

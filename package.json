@@ -8,15 +8,15 @@
         "async"
     ],
     "scripts": {
-        "lint": "prettier -l *.ts lib/*.ts test/*.ts",
+        "lint": "prettier -l .",
         "build": "tsc",
         "test": "c8 -r text -r cobertura -x build/test multi-tape -p 4 build/test/test-*.js"
     },
     "author": "Mattias Holmlund",
     "license": "MIT",
     "dependencies": {
-        "deep-equal": "^2.0.1",
-        "object-inspect": "^1.7.0"
+        "deep-equal": "^2.0.5",
+        "object-inspect": "^1.12.2"
     },
     "repository": {
         "type": "git",
@@ -27,15 +27,15 @@
     },
     "devDependencies": {
         "@types/deep-equal": "^1.0.1",
-        "@types/node": "^13.13.2",
-        "@types/object-inspect": "^1.6.0",
-        "@types/xml2js": "^0.4.5",
+        "@types/node": "^18.7.13",
+        "@types/object-inspect": "^1.8.1",
+        "@types/xml2js": "^0.4.11",
         "c8": "^7.12.0",
-        "multi-tape": "^1.6.1",
-        "prettier": "^1.19.1",
-        "source-map-support": "^0.5.16",
-        "tempy": "^0.5.0",
-        "typescript": "^3.8.3",
+        "multi-tape": "^1.7.0",
+        "prettier": "^2.7.1",
+        "source-map-support": "^0.5.21",
+        "tempy": "^1.0.1",
+        "typescript": "^4.8.2",
         "xml2js": "^0.4.23"
     }
 }

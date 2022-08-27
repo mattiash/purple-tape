@@ -15,10 +15,7 @@ export type TestReport = {
 }
 
 function attr(v: string) {
-    return v
-        .replace(/&/g, '&amp;')
-        .replace(/"/g, '&quot;')
-        .replace(/</, '&lt;')
+    return v.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</, '&lt;')
 }
 
 export function generateXunit(tr: TestReport) {
