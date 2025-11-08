@@ -2,7 +2,11 @@
 
 ## [Unreleased]
 
-## [3.9.3] 2025-11-08
+## [3.9.4] 2025-11-08
+
+- No code changes
+
+## [3.9.3] (not released to npm)
 
 - Upgrade dependencies
 - Add documentation that can be passed to a coding agent.
