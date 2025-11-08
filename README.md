@@ -1,7 +1,7 @@
 # Purple-Tape
 
 ![Build master](https://github.com/mattiash/purple-tape/workflows/Build%20master/badge.svg)
-![Publish to nom](https://github.com/mattiash/purple-tape/workflows/Publish%20to%20npm/badge.svg)
+![Publish to npm](https://github.com/mattiash/purple-tape/workflows/Publish%20Package/badge.svg)
 ![npm version](https://badge.fury.io/js/purple-tape.svg)
 
 Purple-tape is a test framework for nodejs.
