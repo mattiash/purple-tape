@@ -33,7 +33,7 @@ function stringify(value: any) {
         return value === undefined
             ? '[Object Undefined]'
             : value === null
-            ? '[Object null]'
-            : '[Unknown value]'
+              ? '[Object null]'
+              : '[Unknown value]'
     }
 }
