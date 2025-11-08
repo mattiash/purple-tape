@@ -15,8 +15,8 @@
     "author": "Mattias Holmlund",
     "license": "MIT",
     "dependencies": {
-        "deep-equal": "^2.0.5",
-        "object-inspect": "^1.12.2"
+        "deep-equal": "^2.2.3",
+        "object-inspect": "^1.13.4"
     },
     "repository": {
         "type": "git",
@@ -26,16 +26,16 @@
         "url": "https://github.com/mattiash/purple-tape/issues"
     },
     "devDependencies": {
-        "@types/deep-equal": "^1.0.1",
-        "@types/node": "^18.7.13",
-        "@types/object-inspect": "^1.8.1",
-        "@types/xml2js": "^0.4.11",
-        "c8": "^7.12.0",
-        "multi-tape": "^1.7.0",
-        "prettier": "^2.7.1",
+        "@types/deep-equal": "^1.0.4",
+        "@types/node": "^24.10.0",
+        "@types/object-inspect": "^1.13.0",
+        "@types/xml2js": "^0.4.14",
+        "c8": "^10.1.3",
+        "multi-tape": "^1.7.1",
+        "prettier": "^3.6.2",
         "source-map-support": "^0.5.21",
         "tempy": "^1.0.1",
-        "typescript": "^4.8.2",
-        "xml2js": "^0.4.23"
+        "typescript": "^5.9.3",
+        "xml2js": "^0.6.2"
     }
 }
