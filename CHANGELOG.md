@@ -2,7 +2,11 @@
 
 ## [Unreleased]
 
-## [3.9.4] 2025-11-08
+## [3.9.5] 2025-11-08
+
+- No code changes
+
+## [3.9.4] (not released to npm)
 
 - No code changes
 
