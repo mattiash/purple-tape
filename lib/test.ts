@@ -44,12 +44,14 @@ export class Test {
             this.waitQueue.push({ result, message, extra })
         } else {
             this.assertions++
+            const useEmoji = !process.env.PT_NO_EMOJI
             if (result === 'pass') {
                 passedChecks++
+                const emoji = useEmoji ? '✅ ' : ''
                 console.log(
                     `ok ${
                         passedChecks + failedChecks + erroredChecks
-                    } ${message}`
+                    } ${emoji}${message}`
                 )
             } else {
                 const errorComments = this.errorCommentFns
@@ -72,10 +74,11 @@ export class Test {
                         .join('\n')
                     this.firstNonSuccessStatus = result
                 }
+                const emoji = useEmoji ? '❌ ' : ''
                 console.log(
                     `not ok ${
                         passedChecks + failedChecks + erroredChecks
-                    } ${message}`
+                    } ${emoji}${message}`
                 )
                 if (extra) {
                     console.log(inlineYamlBlock(extra))

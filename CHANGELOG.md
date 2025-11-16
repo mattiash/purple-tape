@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+- Add visual indicators (✅/❌) to assertion output
+- Support PT_NO_EMOJI environment variable to disable emojis
+
 ## [3.9.5] 2025-11-08
 
 - No code changes
