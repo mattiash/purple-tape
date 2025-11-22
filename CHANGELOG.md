@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+### Fixes
+
+- Refactor inlineYamlBlock to use yaml npm package instead of custom implementation
+- Handle Error objects properly in inlineYamlBlock by extracting message, stack, and name properties
+
 ## [3.9.6] 2025-11-16
 
 - Add visual indicators (✅/❌) to assertion output

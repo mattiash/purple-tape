@@ -1,39 +1,30 @@
-export function inlineYamlBlock(obj: any) {
-    let result = Object.keys(obj)
-        .map((key) => `${key}: ${jsonValue(stringify(obj[key]))}`)
-        .join('\n')
-    result = indent(result)
-    result = `---\n${result}\n...`
-    result = indent(result)
-    return result + '\n'
-}
+import { stringify } from 'yaml'
 
-function jsonValue(str: string) {
-    if (/\:|\-|\?/.test(str)) {
-        return `|-\n${indent(str)}`
-    } else {
-        return str
+export function inlineYamlBlock(obj: any): string {
+    if (obj === undefined || obj === '') {
+        return ''
     }
-}
 
-function indent(lines: string) {
-    return lines
+    // Handle Error objects by extracting their properties
+    let objToSerialize = obj
+    if (obj instanceof Error) {
+        objToSerialize = {
+            name: obj.name,
+            message: obj.message,
+            stack: obj.stack,
+        }
+    }
+
+    const yamlStr = stringify(objToSerialize, {
+        indent: 2,
+    })
+
+    // Add indentation and wrap with --- and ...
+    const indented = yamlStr
         .split('\n')
-        .map((s) => '  ' + s)
+        .filter((line) => line.length > 0)
+        .map((line) => '  ' + line)
         .join('\n')
-}
 
-function stringify(value: any) {
-    try {
-        const str = value.toString()
-        return str
-    } catch {
-        // In javascript 1.8.5, null and undefined will have a toString()
-        // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/toString
-        return value === undefined
-            ? '[Object Undefined]'
-            : value === null
-              ? '[Object null]'
-              : '[Unknown value]'
-    }
+    return `  ---\n${indented}\n  ...\n`
 }

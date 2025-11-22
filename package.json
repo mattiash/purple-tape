@@ -16,7 +16,8 @@
     "license": "MIT",
     "dependencies": {
         "deep-equal": "^2.2.3",
-        "object-inspect": "^1.13.4"
+        "object-inspect": "^1.13.4",
+        "yaml": "^2.8.1"
     },
     "repository": {
         "type": "git",
