@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [3.9.7] 2025-11-22
+
 ### Fixes
 
 - Refactor inlineYamlBlock to use yaml npm package instead of custom implementation
