@@ -192,6 +192,16 @@ async function run() {
         // Avoid something hanging the process after a bailout
         process.exit()
     }
+
+    // Wait for stdout to drain so the summary written in the exit handler
+    // is not lost when there is a large volume of output.
+    await new Promise<void>((resolve) => {
+        if (process.stdout.writableNeedDrain) {
+            process.stdout.once('drain', resolve)
+        } else {
+            resolve()
+        }
+    })
 }
 
 async function summarize(tr: TestReport) {
