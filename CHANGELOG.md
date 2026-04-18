@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Fixes
+
+- Fix "Tag not resolved for Function value" error when serializing objects containing function values in YAML output; functions are now rendered as `[Function]`
+
 ## [3.9.7] 2025-11-22
 
 ### Fixes

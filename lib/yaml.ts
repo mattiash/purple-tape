@@ -15,9 +15,11 @@ export function inlineYamlBlock(obj: any): string {
         }
     }
 
-    const yamlStr = stringify(objToSerialize, {
-        indent: 2,
-    })
+    const yamlStr = stringify(
+        objToSerialize,
+        (_key, value) => (typeof value === 'function' ? '[Function]' : value),
+        { indent: 2 }
+    )
 
     // Add indentation and wrap with --- and ...
     const indented = yamlStr
