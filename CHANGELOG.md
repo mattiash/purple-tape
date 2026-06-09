@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Fixes
+
+- Fix TAP summary lines missing from output when stdout is piped and the test produces large amounts of output; the plan line and test counts are now written with `fs.writeSync` (a synchronous syscall) instead of `console.log`, so they cannot be lost when the process exits from an `exit` event handler where async I/O does not complete
+
 ## [3.9.8] 2026-04-18
 
 ### Fixes

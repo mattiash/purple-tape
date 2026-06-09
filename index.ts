@@ -11,7 +11,7 @@ import {
 export { Test }
 import { TestReport, generateXunit, prematureXunit } from './lib/xunit'
 import { basename } from 'path'
-import { writeFileSync } from 'fs'
+import { writeFileSync, writeSync } from 'fs'
 import { PurpleTapeTest } from './lib/purple-tape-test'
 
 let uncaughtExceptions = new Array<Error>()
@@ -193,8 +193,9 @@ async function run() {
         process.exit()
     }
 
-    // Wait for stdout to drain so the summary written in the exit handler
-    // is not lost when there is a large volume of output.
+    // Drain stdout so all test assertion output reaches the kernel pipe buffer
+    // before the process exits. The TAP summary is written in the 'exit' handler
+    // via fs.writeSync (a synchronous syscall) to guarantee it is not lost.
     await new Promise<void>((resolve) => {
         if (process.stdout.writableNeedDrain) {
             process.stdout.once('drain', resolve)
@@ -238,16 +239,26 @@ async function summarize(tr: TestReport) {
     if (process.env.PT_XUNIT_FILE) {
         writeFileSync(process.env.PT_XUNIT_FILE, generateXunit(tr))
     }
-    console.log(`\n1..${passedChecks + failedChecks + erroredChecks}`)
-    console.log(`# tests ${passedChecks + failedChecks + erroredChecks}`)
-    console.log(`# pass  ${passedChecks}`)
+
+    // Use fs.writeSync for the TAP plan and count lines. These are written in
+    // an 'exit' event handler where async I/O cannot complete — console.log
+    // writes to Node's internal buffer which is abandoned when the process
+    // exits, but writeSync issues a blocking syscall that reaches the kernel
+    // pipe buffer directly, so the lines are never lost.
+    const total = passedChecks + failedChecks + erroredChecks
+    writeSync(process.stdout.fd, `\n1..${total}\n`)
+    writeSync(process.stdout.fd, `# tests ${total}\n`)
+    writeSync(process.stdout.fd, `# pass  ${passedChecks}\n`)
 
     if (failedChecks + erroredChecks > 0) {
-        console.log(`# fail  ${failedChecks + erroredChecks}`)
+        writeSync(
+            process.stdout.fd,
+            `# fail  ${failedChecks + erroredChecks}\n`
+        )
         process.exitCode = 1
     }
 
-    console.log()
+    writeSync(process.stdout.fd, '\n')
 }
 
 if (process.env.PT_XUNIT_FILE) {
