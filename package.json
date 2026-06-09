@@ -1,6 +1,6 @@
 {
     "name": "purple-tape",
-    "version": "3.9.8",
+    "version": "3.9.9",
     "description": "Tape tests with async/await",
     "main": "build/index.js",
     "keywords": [
