@@ -1,5 +1,7 @@
-import { Test } from './test'
+import { writeSync } from 'fs'
+import { Test, passedChecks, failedChecks, erroredChecks } from './test'
 import { TestEntryResult } from './xunit'
+import { inlineYamlBlock } from './yaml'
 
 // Save original Date in case sinon overrides it
 const originalNowFn = Date.now
@@ -12,6 +14,21 @@ export class PurpleTapeTest extends Test {
 
     succeeded() {
         return this.success
+    }
+
+    addSyncError(message: string, extra?: any): void {
+        this.trackError(message, extra)
+        const emoji = process.env.PT_NO_EMOJI ? '' : '❌ '
+        writeSync(
+            process.stdout.fd,
+            `not ok ${passedChecks + failedChecks + erroredChecks} ${emoji}${message}\n`
+        )
+        if (extra) {
+            const yaml = inlineYamlBlock(extra)
+            if (yaml) {
+                writeSync(process.stdout.fd, yaml + '\n')
+            }
+        }
     }
 
     endTest() {

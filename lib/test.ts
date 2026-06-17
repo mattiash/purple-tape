@@ -88,6 +88,21 @@ export class Test {
         }
     }
 
+    protected trackError(message: string, extra?: any): void {
+        this.assertions++
+        erroredChecks++
+        if (this.success) {
+            this.success = false
+            this.firstNonSuccessMessage = [
+                message,
+                extra ? inlineYamlBlock(extra) : '',
+            ]
+                .filter((s) => !!s)
+                .join('\n')
+            this.firstNonSuccessStatus = 'error'
+        }
+    }
+
     private assertNotEnded() {
         if (this.ended) {
             this.addAssertion(

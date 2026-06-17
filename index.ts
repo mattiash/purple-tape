@@ -207,7 +207,7 @@ async function run() {
 
 async function summarize(tr: TestReport) {
     if (!currentTest.ended) {
-        currentTest['addAssertion']('error', 'process.exit called', {})
+        currentTest.addSyncError('process.exit called')
         currentTest.endTest()
         tr.entries.push(currentTest)
     } else if (
@@ -215,19 +215,19 @@ async function summarize(tr: TestReport) {
         unhandledRejections.length ||
         uncaughtExceptions.length
     ) {
-        console.log('\n# Purple-tape internal')
+        writeSync(process.stdout.fd, '\n# Purple-tape internal\n')
         const pt = new PurpleTapeTest('Purple-tape internal')
         if (process.exitCode) {
-            pt.errorOut(`exited with error ${process.exitCode}`)
+            pt.addSyncError(`exited with error ${process.exitCode}`)
         }
         if (unhandledRejections.length) {
-            pt.errorOut(
+            pt.addSyncError(
                 `${unhandledRejections.length} unhandled rejection(s)`,
                 unhandledRejections.map((r) => (r.stack ? r.stack : r))
             )
         }
         if (uncaughtExceptions.length) {
-            pt.errorOut(
+            pt.addSyncError(
                 `${uncaughtExceptions.length} uncaught exception(s)`,
                 uncaughtExceptions.map((e) => (e.stack ? e.stack : e))
             )

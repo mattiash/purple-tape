@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Fixes
+
+- Fix TAP assertion lines for uncaught exceptions, unhandled rejections, and premature `process.exit()` being missing from output; these are written inside the `exit` event handler and now use `fs.writeSync` instead of `console.log` for the same reason as the plan/count lines
+
 ## [3.9.9] 2026-06-09
 
 ### Fixes
