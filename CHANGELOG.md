@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [3.9.11] 2026-06-24
+
 ### Changes
 
 - `t.comment()` now outputs `💬 message` instead of `# message`, so inline comments
