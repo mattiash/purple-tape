@@ -480,7 +480,7 @@ export class Test {
      */
     comment(message: string) {
         this.assertNotEnded()
-        console.log(`# ${message}`)
+        console.log(`💬 ${message}`)
     }
 
     /**

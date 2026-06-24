@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+### Changes
+
+- `t.comment()` now outputs `💬 message` instead of `# message`, so inline comments
+  are not misinterpreted as test-case boundaries by TAP consumers that use `#` comments
+  to group assertions (such as multi-tape's JUnit XML generator).
+
 ## [3.9.10] 2026-06-17
 
 ### Fixes
