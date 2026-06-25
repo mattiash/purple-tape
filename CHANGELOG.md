@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [3.9.12] 2026-06-25
+
 ### Fixes
 
 - Fix `EAGAIN: resource temporarily unavailable, write` errors when running tests in parallel under multi-tape; the TAP summary is now written in a `beforeExit` handler using `console.log` instead of `fs.writeSync` in the `exit` handler, so Node's stream layer handles back-pressure and drain automatically
