@@ -16,6 +16,7 @@ import { PurpleTapeTest } from './lib/purple-tape-test'
 
 let uncaughtExceptions = new Array<Error>()
 let unhandledRejections = new Array<any>()
+let summaryWritten = false
 
 process.on('uncaughtException', (err) => {
     console.log(err)
@@ -137,6 +138,7 @@ async function run() {
         entries: [],
     }
 
+    process.on('beforeExit', () => writeSummary(tr))
     process.on('exit', () => summarize(tr))
 
     if (onlyTest > -1) {
@@ -193,19 +195,64 @@ async function run() {
         process.exit()
     }
 
-    // Drain stdout so all test assertion output reaches the kernel pipe buffer
-    // before the process exits. The TAP summary is written in the 'exit' handler
-    // via fs.writeSync (a synchronous syscall) to guarantee it is not lost.
-    await new Promise<void>((resolve) => {
-        if (process.stdout.writableNeedDrain) {
-            process.stdout.once('drain', resolve)
-        } else {
-            resolve()
-        }
-    })
+    // Summary is written in the beforeExit handler once the event loop drains,
+    // which happens after all post-test timers and I/O have settled.
 }
 
-async function summarize(tr: TestReport) {
+function writeSummary(tr: TestReport) {
+    if (summaryWritten) return
+    summaryWritten = true
+
+    if (
+        process.exitCode ||
+        unhandledRejections.length ||
+        uncaughtExceptions.length
+    ) {
+        console.log('\n# Purple-tape internal')
+        const pt = new PurpleTapeTest('Purple-tape internal')
+        if (process.exitCode) {
+            pt.errorOut(`exited with error ${process.exitCode}`)
+        }
+        if (unhandledRejections.length) {
+            pt.errorOut(
+                `${unhandledRejections.length} unhandled rejection(s)`,
+                unhandledRejections.map((r) => (r.stack ? r.stack : r))
+            )
+        }
+        if (uncaughtExceptions.length) {
+            pt.errorOut(
+                `${uncaughtExceptions.length} uncaught exception(s)`,
+                uncaughtExceptions.map((e) => (e.stack ? e.stack : e))
+            )
+        }
+        pt.endTest()
+        tr.entries.push(pt)
+    }
+
+    if (process.env.PT_XUNIT_FILE) {
+        writeFileSync(process.env.PT_XUNIT_FILE, generateXunit(tr))
+    }
+
+    const total = passedChecks + failedChecks + erroredChecks
+    console.log(`\n1..${total}`)
+    console.log(`# tests ${total}`)
+    console.log(`# pass  ${passedChecks}`)
+
+    if (failedChecks + erroredChecks > 0) {
+        console.log(`# fail  ${failedChecks + erroredChecks}`)
+        process.exitCode = 1
+    }
+
+    console.log()
+    // The console.log calls above buffer data in Node's stdout stream. If the
+    // stream needs to drain, it schedules I/O callbacks that keep the event
+    // loop alive; beforeExit fires again after they complete, but summaryWritten
+    // is already true so writeSummary returns immediately.
+}
+
+function summarize(tr: TestReport) {
+    if (summaryWritten) return
+
     if (!currentTest.ended) {
         currentTest.addSyncError('process.exit called')
         currentTest.endTest()
@@ -240,11 +287,6 @@ async function summarize(tr: TestReport) {
         writeFileSync(process.env.PT_XUNIT_FILE, generateXunit(tr))
     }
 
-    // Use fs.writeSync for the TAP plan and count lines. These are written in
-    // an 'exit' event handler where async I/O cannot complete — console.log
-    // writes to Node's internal buffer which is abandoned when the process
-    // exits, but writeSync issues a blocking syscall that reaches the kernel
-    // pipe buffer directly, so the lines are never lost.
     const total = passedChecks + failedChecks + erroredChecks
     writeSync(process.stdout.fd, `\n1..${total}\n`)
     writeSync(process.stdout.fd, `# tests ${total}\n`)
